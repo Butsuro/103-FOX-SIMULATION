@@ -1,0 +1,47 @@
+def run_program():
+    while True:
+        try:
+            x = 0
+            numberOfFoxes = int(input("How Many Foxes are in the Enclosure?: "))
+            numberOfFamilies = int(input("How Many Families are There?: "))
+
+            # Initialize the list to store foxes in each family
+            foxesInFamilies = [0] * numberOfFamilies 
+
+            # Collect data on foxes in families
+            while x < numberOfFamilies:
+                foxesInFamily = int(input(f"How Many Foxes are in Family {x + 1}?: "))
+                foxesInFamilies[x] = foxesInFamily  
+                x += 1
+                print(f"Family {x} has {foxesInFamily} foxes.")
+
+            # Function to check if the number of foxes per family is valid
+            def check_foxes_in_families(foxes_in_families, number_of_foxes, number_of_families):
+                total_foxes_in_families = sum(foxes_in_families)
+                if total_foxes_in_families > number_of_foxes:
+                    raise ValueError("Error: The total number of foxes in all families exceeds the number of foxes in the enclosure.")
+                if any(foxes > number_of_families for foxes in foxes_in_families):
+                    raise ValueError("Error: A family cannot have more foxes than the total number of families.")
+            
+            # Run the check after all fox data is input
+            check_foxes_in_families(foxesInFamilies, numberOfFoxes, numberOfFamilies)
+
+            # Proceed with remaining inputs
+            speciesSimulating = input("Are we Catching Foxes or Coyotes?: ")
+            enclosureOfInterest = input("Which Enclosure is Being Used?: ")
+            timeSpent = input("How Long Have the Canids Spent in the Enclosure?: ")
+
+            # Print out the collected information
+            print(f"Number of Foxes: {numberOfFoxes}")
+            print(f"Number of Families: {numberOfFamilies}")
+            print(f"Foxes in Each Family: {foxesInFamilies}")
+            print(f"Species Simulating: {speciesSimulating}")
+            print(f"Enclosure of Interest: {enclosureOfInterest}")
+            print(f"Time Spent: {timeSpent}")
+            break  # Exit the loop if everything is valid
+
+        except ValueError as e:
+            print(e)
+            print("Please try again.")  # Inform the user that they need to try again
+# Run the program
+run_program()
