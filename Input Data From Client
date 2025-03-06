@@ -2,12 +2,13 @@ def run_program():
     while True:
         try:
             x = 0
+            b = 0 
             numberOfFoxes = int(input("How Many Foxes are in the Enclosure?: "))
             numberOfFamilies = int(input("How Many Families are There?: "))
 
             # Initialize the list to store foxes in each family
-            foxesInFamilies = [0] * numberOfFamilies 
-
+            foxesInFamilies = [0]*numberOfFamilies
+            
             # Collect data on foxes in families
             while x < numberOfFamilies:
                 foxesInFamily = int(input(f"How Many Foxes are in Family {x + 1}?: "))
@@ -20,8 +21,9 @@ def run_program():
                 total_foxes_in_families = sum(foxes_in_families)
                 if total_foxes_in_families > number_of_foxes:
                     raise ValueError("Error: The total number of foxes in all families exceeds the number of foxes in the enclosure.")
-                if any(foxes > number_of_families for foxes in foxes_in_families):
-                    raise ValueError("Error: A family cannot have more foxes than the total number of families.")
+
+            if numberOfFamilies == 0:
+                    foxesInFamilies = [1] * numberOfFoxes
             
             # Run the check after all fox data is input
             check_foxes_in_families(foxesInFamilies, numberOfFoxes, numberOfFamilies)
@@ -42,6 +44,6 @@ def run_program():
 
         except ValueError as e:
             print(e)
-            print("Please try again.")  # Inform the user that they need to try again
+            print("Please give new data.")  # Inform the user that they need to try again
 # Run the program
 run_program()
