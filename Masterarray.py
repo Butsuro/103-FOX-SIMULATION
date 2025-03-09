@@ -1,9 +1,9 @@
 import envmap as EM
 import numpy as np
 
-Master1 = np.zeros((4, 20, 12))
-Master2 = np.zeros((4, 16, 12))
-Master3 = np.zeros((4, 13, 12))
+Master1 = np.zeros((5, 20, 12))
+Master2 = np.zeros((5, 16, 12))
+Master3 = np.zeros((5, 13, 12))
 
 Master1[0] = EM.Container1
 Master2[0] = EM.Container2
