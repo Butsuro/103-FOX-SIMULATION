@@ -6,6 +6,8 @@
 #  3 -> Dirt
 #  4 -> Fence
 #  5 -> Hut
+#  7 -> Special Dirt(No spawning zone)
+#  6 -> Food
 #  0 -> empty
 
 # Container 1 is rightmost container

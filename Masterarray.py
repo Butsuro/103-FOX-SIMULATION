@@ -1,6 +1,12 @@
 import envmap as EM
 import numpy as np
 
+# 1 [0] -> Enviorement
+# 2 [1] -> Fox Positions
+# 3 [2] -> Tracking Layer
+# 4 [3] -> Dens
+# 5 [4] -> Food
+
 Master1 = np.zeros((5, 20, 12))
 Master2 = np.zeros((5, 16, 12))
 Master3 = np.zeros((5, 13, 12))
