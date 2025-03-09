@@ -1,0 +1,10 @@
+def findClosest(canidPosition, positionList):
+        lowestDist = None
+        counter = 0
+        for position in positionList:
+            counter += 1
+            if lowestDist is None or lowestDist > np.linalg.norm(position-canidPosition):
+                distVector = np.array(position-canidPosition)
+                lowestDist = np.linalg.norm(distVector)
+                arrayPosition = counter
+        return [distVector, lowestDist, arrayPosition]
