@@ -1,0 +1,32 @@
+import envmap as EM
+import numpy as np
+
+def expand_to_3x3(array):
+    # Get the dimensions of the original 2D array
+    rows, cols = array.shape
+
+    # Create an empty list to store the expanded rows
+    expanded_rows = []
+
+    # Iterate through each element in the original 2D array
+    for i in range(rows):
+        for _ in range(3):  # Repeat each row 3 times
+            expanded_row = []
+            for j in range(cols):
+                # Create a 3x3 matrix with the current element and flatten it
+                element_3x3 = np.full((3, 1), array[i, j]).flatten()
+                expanded_row.extend(element_3x3)
+            expanded_rows.append(expanded_row)
+
+    # Convert the list of lists into a numpy array
+    expanded_array = np.array(expanded_rows)
+
+    return expanded_array
+
+# Example usage
+array_2d = np.array(EM.container3)
+expanded_array = expand_to_3x3(array_2d)
+
+# Print the array with square brackets around each row and commas between elements
+for row in expanded_array:
+    print(f"[{', '.join(map(str, row))}],")
