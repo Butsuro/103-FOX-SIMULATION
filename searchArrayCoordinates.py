@@ -1,7 +1,7 @@
 import random
 
 # Define ID for what number is what item
-valid_ids = {0: "empty", 1: "tree", 2: "grass", 3: "dirt", 5: "hut", 6: "food"}
+valid_ids = {0: "empty", 1: "tree", 2: "grass", 3: "dirt", 4: "fence", 5: "hut", 6: "food"}
 
 
 def generate_enclosure(rows=12, cols=20, food_count=10):
