@@ -7,9 +7,9 @@ import numpy as np
 # 4 [3] -> Dens
 # 5 [4] -> Food
 
-Master1 = np.zeros((5, 20, 12))
-Master2 = np.zeros((5, 16, 12))
-Master3 = np.zeros((5, 13, 12))
+Master1 = np.zeros((5, (20*3), (12*3)))
+Master2 = np.zeros((5, (16*3), (12*3)))
+Master3 = np.zeros((5, (13*3), (12*3)))
 
 Master1[0] = EM.Container1
 Master2[0] = EM.Container2
@@ -22,4 +22,3 @@ Master3[0] = EM.container3
 #     for row in level:
 #         print(row)
 #     print() 
-
