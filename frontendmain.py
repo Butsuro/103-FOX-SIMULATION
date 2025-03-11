@@ -84,3 +84,6 @@ while running:
 
 # Quit Pygame
 pygame.quit()
+
+# Run the simulation
+import frontendsim
