@@ -1,49 +1,37 @@
+def check_foxes_in_families(foxes_in_families, number_of_foxes):
+    """Checks if the total foxes in families exceed the total in the enclosure."""
+    if sum(foxes_in_families) > number_of_foxes:
+        raise ValueError("Error: The total number of foxes in families exceeds the number of foxes in the enclosure.")
+
 def run_program():
     while True:
         try:
-            x = 0
-            b = 0 
-            numberOfFoxes = int(input("How Many Foxes are in the Enclosure?: "))
-            numberOfFamilies = int(input("How Many Families are There?: "))
+            enclosureOfInterest = input("Select an enclosure: ")
+            speciesSimulating = input("Select a species: ")
+            numberOfCanids = int(input("Enter the total number of canids in the enclosure: "))
+            numberOfFamilies = int(input("Enter the number of social groups formed in the enclosure: "))
+            timeSpent = input("How many days have the canids been in the enclosure?: ")
 
-            # Initialize the list to store foxes in each family
-            foxesInFamilies = [0]*numberOfFamilies
-            
-            # Collect data on foxes in families
-            while x < numberOfFamilies:
-                foxesInFamily = int(input(f"How Many Foxes are in Family {x + 1}?: "))
-                foxesInFamilies[x] = foxesInFamily  
-                x += 1
-                print(f"Family {x} has {foxesInFamily} foxes.")
+            # If no families exist, treat each canid as its own "family"
+            canidsInFamilies = [1] * numberOfCanids if numberOfFamilies == 0 else [
+                int(input(f"How many canids are in Family {i + 1}?: ")) for i in range(numberOfFamilies)
+            ]
 
-            # Function to check if the number of foxes per family is valid
-            def check_foxes_in_families(foxes_in_families, number_of_foxes, number_of_families):
-                total_foxes_in_families = sum(foxes_in_families)
-                if total_foxes_in_families > number_of_foxes:
-                    raise ValueError("Error: The total number of foxes in all families exceeds the number of foxes in the enclosure.")
+            # Validate family count
+            check_foxes_in_families(canidsInFamilies, numberOfCanids)
 
-            if numberOfFamilies == 0:
-                    foxesInFamilies = [1] * numberOfFoxes
-            
-            # Run the check after all fox data is input
-            check_foxes_in_families(foxesInFamilies, numberOfFoxes, numberOfFamilies)
+            # Print collected information
+            print(f"\nCollected Data:\n"
+                  f"Number of {speciesSimulating}: {numberOfCanids}\n"
+                  f"Number of Families: {numberOfFamilies}\n"
+                  f"{speciesSimulating} in Each Family: {canidsInFamilies}\n"
+                  f"Enclosure of Interest: {enclosureOfInterest}\n"
+                  f"Time Spent: {timeSpent}")
 
-            # Proceed with remaining inputs
-            speciesSimulating = input("Are we Catching Foxes or Coyotes?: ")
-            enclosureOfInterest = input("Which Enclosure is Being Used?: ")
-            timeSpent = input("How Long Have the Canids Spent in the Enclosure?: ")
-
-            # Print out the collected information
-            print(f"Number of Foxes: {numberOfFoxes}")
-            print(f"Number of Families: {numberOfFamilies}")
-            print(f"Foxes in Each Family: {foxesInFamilies}")
-            print(f"Species Simulating: {speciesSimulating}")
-            print(f"Enclosure of Interest: {enclosureOfInterest}")
-            print(f"Time Spent: {timeSpent}")
-            break  # Exit the loop if everything is valid
+            break  # Exit loop if inputs are valid
 
         except ValueError as e:
-            print(e)
-            print("Please give new data.")  # Inform the user that they need to try again
+            print(f"\n{e}\nPlease enter valid data.\n")
+
 # Run the program
 run_program()
