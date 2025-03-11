@@ -40,18 +40,19 @@ HEATMAP_TRANSPARENCY_SCALE = 10  # How quickly the heatmap will be visible
 CHOSEN_CONTAINER = Container1
 
 # Simulation Display Variables
-XOFFSET = 50  # Simulation X extra space (effects environment size)
-YOFFSET = 50  # Simulation Y extra space (effects environment size)
-XDISPLACEMENT = 0  # How far to the right the environment is displaced
-YDISPLACEMENT = 75  # How far down the environment is displaced
-XBORDERLENGTH = 150  # How much empty space will be on the X
-YBORDERLENGTH = 100  # How much empty space will be on the Y 
+X_OFFSET = 50  # Changes the x size of the environment
+Y_OFFSET = 50  # Changes the Y size of the environment
+X_DISPLACEMENT = 0  # How far to the right the environment is displaced
+Y_DISPLACEMENT = 75  # How far down the environment is displaced
+X_BORDER_LENGTH = 150  # How much empty space will be on the X
+Y_BORDER_LENGTH = 100  # How much empty space will be on the Y 
+X_BUTTON_DISPLACEMENT = 130 # How far to the left will the button be displayed
 
 
 ################################### Display Variables ###################################
 # Diplay/screen Setup
 SCREEN_MULTIPLIER = 10 # Controls how big the screen will be.
-WIDTH, HEIGHT = len(CHOSEN_CONTAINER[0])*SCREEN_MULTIPLIER + XBORDERLENGTH, len(CHOSEN_CONTAINER)*SCREEN_MULTIPLIER + YBORDERLENGTH
+WIDTH, HEIGHT = len(CHOSEN_CONTAINER[0])*SCREEN_MULTIPLIER + X_BORDER_LENGTH, len(CHOSEN_CONTAINER)*SCREEN_MULTIPLIER + Y_BORDER_LENGTH
 FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Simulation Window")
@@ -68,7 +69,7 @@ class Button:
     # Create the button class
     def __init__(self, order, text, color, hoverColor, textColor, font):
         self.order = order
-        self.rect = pygame.Rect(WIDTH - 125, YOFFSET + YDISPLACEMENT + 80*(self.order-1), 100, 50)
+        self.rect = pygame.Rect(WIDTH - X_BUTTON_DISPLACEMENT, Y_OFFSET + Y_DISPLACEMENT + 80*(self.order-1), 100, 50)
         self.text = text
         self.color = color
         self.hoverColor = hoverColor
@@ -106,23 +107,23 @@ IMAGES['background'] = pygame.image.load('assets/background.png').convert_alpha(
 
 # Buttons
 buttons = {}
-buttons[0] = Button(1, "Display Heatmap", (255, 50, 50), (255, 120, 120), (0, 0, 0), pygame.font.Font(None, 16))
-buttons[1] = Button(2, "Display Traps", (252, 170, 6), (255, 209, 117), (0, 0, 0), pygame.font.Font(None, 16))
+buttons[0] = Button(1, "Display Heatmap", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
+buttons[1] = Button(2, "Display Traps", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
 
 ################################### Useful functions ###################################
 # Returns an array of pixel sizes/location for each index in a 2D array, as well as the X and Y length of the array
 def turnArrayToPixels(arr, pixelOffset):
     yLength = len(arr)
     xLength = len(arr[0])
-    xPixel = math.floor((WIDTH-XBORDERLENGTH-XOFFSET)/xLength)  # Pixel x length of each block
-    yPixel = math.floor((HEIGHT-YBORDERLENGTH-YOFFSET)/yLength)  # Pixel y length of each block
+    xPixel = math.floor((WIDTH-X_BORDER_LENGTH-X_OFFSET)/xLength)  # Pixel x length of each block
+    yPixel = math.floor((HEIGHT-Y_BORDER_LENGTH-Y_OFFSET)/yLength)  # Pixel y length of each block
     pixelArr = []
     for y in range(yLength):
         row = []
         for x in range(len(arr[y])):
 
             # row[0] is pixel x position, row[1] is pixel y length, row[2] is pixel x size, row[3] is pixel y size
-            row.append([XOFFSET + xPixel*x + XDISPLACEMENT, YOFFSET + yPixel*y + YDISPLACEMENT, xPixel-pixelOffset, yPixel-pixelOffset])
+            row.append([X_OFFSET + xPixel*x + X_DISPLACEMENT, Y_OFFSET + yPixel*y + Y_DISPLACEMENT, xPixel-pixelOffset, yPixel-pixelOffset])
         pixelArr.append(row)
     return xLength, yLength, pixelArr
 
@@ -164,7 +165,7 @@ while running:
 
     # Fill the simulation every frame
     screen.fill(BLACK)
-    pygame.draw.rect(screen, BLACK, (XOFFSET, YOFFSET, WIDTH - 2*XOFFSET, HEIGHT - 2*YOFFSET))
+    pygame.draw.rect(screen, BLACK, (X_OFFSET, Y_OFFSET, WIDTH - 2*X_OFFSET, HEIGHT - 2*Y_OFFSET))
     screen.blit(IMAGES["background"], (0, 0))
     drawEnvironment(CHOSEN_CONTAINER)
     if heatmapVisible:
