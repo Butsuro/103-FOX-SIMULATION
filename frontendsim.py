@@ -40,8 +40,10 @@ HEATMAP_TRANSPARENCY_SCALE = 10  # How quickly the heatmap will be visible
 CHOSEN_CONTAINER = Container1
 
 # Simulation Display Variables
-XOFFSET = 25  # How far off on the X axis will the simulation be displayed
-YOFFSET = 25  # How far off on the Y axis will the simulation be displayed
+XOFFSET = 50  # Simulation X extra space (effects environment size)
+YOFFSET = 50  # Simulation Y extra space (effects environment size)
+XDISPLACEMENT = 0  # How far to the right the environment is displaced
+YDISPLACEMENT = 75  # How far down the environment is displaced
 XBORDERLENGTH = 150  # How much empty space will be on the X
 YBORDERLENGTH = 100  # How much empty space will be on the Y 
 
@@ -66,7 +68,7 @@ class Button:
     # Create the button class
     def __init__(self, order, text, color, hoverColor, textColor, font):
         self.order = order
-        self.rect = pygame.Rect(WIDTH - 150, 50 + 80*(self.order-1), 100, 50)
+        self.rect = pygame.Rect(WIDTH - 125, YOFFSET + YDISPLACEMENT + 80*(self.order-1), 100, 50)
         self.text = text
         self.color = color
         self.hoverColor = hoverColor
@@ -100,7 +102,7 @@ class Button:
 
 # Images
 IMAGES = {}
-IMAGES['tree'] = pygame.image.load('assets/smalltree.png').convert_alpha()
+IMAGES['background'] = pygame.image.load('assets/background.png').convert_alpha()
 
 # Buttons
 buttons = {}
@@ -112,15 +114,15 @@ buttons[1] = Button(2, "Display Traps", (252, 170, 6), (255, 209, 117), (0, 0, 0
 def turnArrayToPixels(arr, pixelOffset):
     yLength = len(arr)
     xLength = len(arr[0])
-    xPixel = math.floor((WIDTH-XBORDERLENGTH-2*XOFFSET)/xLength)  # Pixel x length of each block
-    yPixel = math.floor((HEIGHT-YBORDERLENGTH-2*YOFFSET)/yLength)  # Pixel y length of each block
+    xPixel = math.floor((WIDTH-XBORDERLENGTH-XOFFSET)/xLength)  # Pixel x length of each block
+    yPixel = math.floor((HEIGHT-YBORDERLENGTH-YOFFSET)/yLength)  # Pixel y length of each block
     pixelArr = []
     for y in range(yLength):
         row = []
         for x in range(len(arr[y])):
 
             # row[0] is pixel x position, row[1] is pixel y length, row[2] is pixel x size, row[3] is pixel y size
-            row.append([XOFFSET + xPixel*x, YOFFSET + yPixel*y, xPixel-pixelOffset, yPixel-pixelOffset])
+            row.append([XOFFSET + xPixel*x + XDISPLACEMENT, YOFFSET + yPixel*y + YDISPLACEMENT, xPixel-pixelOffset, yPixel-pixelOffset])
         pixelArr.append(row)
     return xLength, yLength, pixelArr
 
@@ -131,7 +133,11 @@ def drawEnvironment(arr):
     # Draw each element of the 2D Array, and match them with a color
     for y in range(yLength):
         for x in range(len(arr[y])):
-            pygame.draw.rect(screen, numColourLegend[arr[y][x]], (pixelArr[y][x][0], pixelArr[y][x][1], pixelArr[y][x][2], pixelArr[y][x][3]))
+            if arr[y][x] != 0:
+                # Make environment background black
+                pygame.draw.rect(screen, BLACK, (pixelArr[y][x][0], pixelArr[y][x][1], pixelArr[y][x][2] + 1, pixelArr[y][x][3] + 1))
+                # Draw the environment on top of the black
+                pygame.draw.rect(screen, numColourLegend[arr[y][x]], (pixelArr[y][x][0], pixelArr[y][x][1], pixelArr[y][x][2], pixelArr[y][x][3]))
 
 # Draws the heatmap
 def drawHeatmap(arr):
@@ -159,6 +165,7 @@ while running:
     # Fill the simulation every frame
     screen.fill(BLACK)
     pygame.draw.rect(screen, BLACK, (XOFFSET, YOFFSET, WIDTH - 2*XOFFSET, HEIGHT - 2*YOFFSET))
+    screen.blit(IMAGES["background"], (0, 0))
     drawEnvironment(CHOSEN_CONTAINER)
     if heatmapVisible:
         drawHeatmap(CHOSEN_CONTAINER)
