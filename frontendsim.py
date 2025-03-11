@@ -1,6 +1,7 @@
 import pygame
 import math
 import Masterarray as master
+import numpy as np
 pygame.init()
 
 ################################### Containers ###################################
@@ -35,8 +36,8 @@ numColourLegend = {
 
 ################################### Simulation Variables ###################################
 HEATMAP_SCALE = 30  # How visible the heatmap will be
-HEATMAP_COLOUR_SCALE = 1.75  # How quickly the heatmap will turn red
-HEATMAP_TRANSPARENCY_SCALE = 10  # How quickly the heatmap will be visible
+HEATMAP_COLOUR_SCALE = 0.4  # How quickly the heatmap will turn red
+HEATMAP_TRANSPARENCY_SCALE = 0.6  # How quickly the heatmap will be visible
 CHOSEN_CONTAINER = Container1
 
 # Simulation Display Variables
@@ -48,12 +49,11 @@ X_BORDER_LENGTH = 150  # How much empty space will be on the X
 Y_BORDER_LENGTH = 100  # How much empty space will be on the Y 
 X_BUTTON_DISPLACEMENT = 130 # How far to the left will the button be displayed
 
-
-################################### Display Variables ###################################
 # Diplay/screen Setup
 SCREEN_MULTIPLIER = 10 # Controls how big the screen will be.
 WIDTH, HEIGHT = len(CHOSEN_CONTAINER[0])*SCREEN_MULTIPLIER + X_BORDER_LENGTH, len(CHOSEN_CONTAINER)*SCREEN_MULTIPLIER + Y_BORDER_LENGTH
-FPS = 60
+RENDER_TIME = 30  # Delay between each frame
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Simulation Window")
 
@@ -110,6 +110,7 @@ buttons = {}
 buttons[0] = Button(1, "Display Heatmap", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
 buttons[1] = Button(2, "Display Traps", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
 
+
 ################################### Useful functions ###################################
 # Returns an array of pixel sizes/location for each index in a 2D array, as well as the X and Y length of the array
 def turnArrayToPixels(arr, pixelOffset):
@@ -131,13 +132,16 @@ def turnArrayToPixels(arr, pixelOffset):
 def drawEnvironment(arr):
     xLength, yLength, pixelArr = turnArrayToPixels(arr, 1)
 
+    # Make environment background black
+    for y in range(yLength):
+        for x in range(len(arr[y])):
+            if arr[y][x] != 0:
+                pygame.draw.rect(screen, BLACK, (pixelArr[y][x][0] - 2, pixelArr[y][x][1] - 2, pixelArr[y][x][2] + 4, pixelArr[y][x][3] + 4))
+
     # Draw each element of the 2D Array, and match them with a color
     for y in range(yLength):
         for x in range(len(arr[y])):
             if arr[y][x] != 0:
-                # Make environment background black
-                pygame.draw.rect(screen, BLACK, (pixelArr[y][x][0], pixelArr[y][x][1], pixelArr[y][x][2] + 1, pixelArr[y][x][3] + 1))
-                # Draw the environment on top of the black
                 pygame.draw.rect(screen, numColourLegend[arr[y][x]], (pixelArr[y][x][0], pixelArr[y][x][1], pixelArr[y][x][2], pixelArr[y][x][3]))
 
 # Draws the heatmap
@@ -147,10 +151,11 @@ def drawHeatmap(arr):
     # Loop through the array and multiply the transparency with the amount of foxes
     for y in range(yLength):
         for x in range(xLength):
-            pixel = pygame.Surface((pixelArr[y][x][2], pixelArr[y][x][3]))
-            pixel.set_alpha(min(arr[y][x]*HEATMAP_SCALE*HEATMAP_TRANSPARENCY_SCALE, 180))  # transparency level
-            pixel.fill((255,max(255 - arr[y][x]*HEATMAP_SCALE*HEATMAP_COLOUR_SCALE, 0),0))
-            screen.blit(pixel, (pixelArr[y][x][0], pixelArr[y][x][1]))
+            if CHOSEN_CONTAINER[y][x] != 0:
+                pixel = pygame.Surface((pixelArr[y][x][2], pixelArr[y][x][3]))
+                pixel.set_alpha(min(arr[y][x]*HEATMAP_SCALE*HEATMAP_TRANSPARENCY_SCALE, 180))  # transparency level
+                pixel.fill((255,max(255 - arr[y][x]*HEATMAP_SCALE*HEATMAP_COLOUR_SCALE, 0),0))
+                screen.blit(pixel, (pixelArr[y][x][0], pixelArr[y][x][1]))
 
 
 ################################### Simulation Loop ########################################
@@ -161,7 +166,7 @@ trapsVisible = False
 print(WIDTH, HEIGHT)
 
 while running:
-    pygame.time.delay(FPS)
+    pygame.time.delay(RENDER_TIME)
 
     # Fill the simulation every frame
     screen.fill(BLACK)
@@ -169,7 +174,7 @@ while running:
     screen.blit(IMAGES["background"], (0, 0))
     drawEnvironment(CHOSEN_CONTAINER)
     if heatmapVisible:
-        drawHeatmap(CHOSEN_CONTAINER)
+        drawHeatmap(smoothed_array)
     
     # Draw buttons
     for button in buttons.values():
@@ -186,6 +191,22 @@ while running:
                 buttonType = button.get()
                 if buttonType == "Display Heatmap":
                     heatmapVisible = not heatmapVisible
+
+                    # SAMPLE HEAT MAP
+                    rows, cols = 60, 36
+                    random_base = np.random.randint(0, 21, (rows, cols))
+                    smoothed_array = random_base.copy()
+                    for i in range(rows):
+                        for j in range(cols):
+                            neighbors = []
+                            for di in [-1, 0, 1]:
+                                for dj in [-1, 0, 1]:
+                                    ni, nj = i + di, j + dj
+                                    if 0 <= ni < rows and 0 <= nj < cols:
+                                        neighbors.append(random_base[ni, nj])
+                            smoothed_array[i, j] = np.mean(neighbors)
+                    smoothed_array = np.clip(smoothed_array, 0, 20).astype(int)
+
                 if buttonType == "Display Traps":
                     trapsVisible = not trapsVisible
 
