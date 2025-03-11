@@ -1,10 +1,11 @@
 import random
+import math
 
 # Define ID for what number is what item
 valid_ids = {0: "empty", 1: "tree", 2: "grass", 3: "dirt", 5: "hut", 6: "food"}
 
 container3 = [
-[0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+[1, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
 [0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
 [0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
 [0, 0, 0, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4],
@@ -80,7 +81,7 @@ print(found_items)
 
 Den3 =[
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -148,6 +149,7 @@ print(f"\nLocations of {num} ({valid_ids.get(num, 'Unknown')}):")
 print(found_den)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# finding overlaping areas 
 
 def find_overlapping_areas(container3, Den3):
     """Finds overlapping areas between two grids where the items match and are non-zero."""
@@ -175,4 +177,46 @@ if isinstance(overlapping_areas, list) and overlapping_areas:
 else:
     print("No overlapping areas found.")
 
+#--------------------------------------------------------------------------------------------------------------------------------
+#eliminating overlaping areas 
 
+def eliminate_repeats(found_items, found_den):
+    # Using list comprehension and converting arrays to tuples for comparison
+    return [arr for arr in found_items if tuple(arr) not in (tuple(inner_arr) for inner_arr in found_den)]
+
+result = eliminate_repeats(found_items, found_den)
+print("The new set of corrdinates is:")
+print(result)
+
+#-------------------------------------------------------------------------------------------------------------------------------------
+# eliminate 2-meter radius 
+
+def distance(coord1, coord2):
+    # Calculate the Euclidean distance between two coordinates
+    dist = math.sqrt((coord2[0] - coord1[0]) ** 2 + (coord2[1] - coord1[1]) ** 2)
+    return dist
+
+def remove_close_coordinates(found_items, found_den, radius=2):
+    # Combine the two lists
+    combined = found_items + found_den
+    unique_coordinates = []
+
+    for coord in combined:
+        # Check the distance from all previously added coordinates
+        too_close = False
+        for unique_coord in unique_coordinates:
+            dist = distance(coord, unique_coord)
+            if dist <= radius:  # Condition is now inclusive of coordinates that are exactly 2 units away
+                too_close = True
+                print(f"Removing {coord} because it's within {radius} units of {unique_coord}. Distance = {dist}")
+                break
+
+        # Add the coordinate if it is not too close
+        if not too_close:
+            unique_coordinates.append(coord)
+
+    return unique_coordinates
+
+result = remove_close_coordinates(found_items, found_den)
+print("\nFinal coordinates:")
+print(result)
