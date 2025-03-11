@@ -4,7 +4,7 @@ import random
 valid_ids = {0: "empty", 1: "tree", 2: "grass", 3: "dirt", 4: "fence", 5: "hut", 6: "food"}
 
 
-def generate_enclosure(rows=12, cols=20, food_count=10):
+def generate_enclosure(rows=36, cols=60, food_count=10):
     """Creates a 12x20 enclosure where each 0 represents a meter. Places food (6) randomly."""
     enclosure = [[0 for _ in range(cols)] for _ in range(rows)]  # Create a grid of zeros (empty meters)
     food_positions = set()
@@ -20,10 +20,10 @@ def generate_enclosure(rows=12, cols=20, food_count=10):
 
 
 
-#-------------------------------------THE ACTUAL FUNCTION--------------------------------------------------------
+#-------------------------------------THE ACTUAL FUNCTION-----------------------------------------------------------------------------------------------------------------------------------------
 
 def find_items(enclosure, num):
-    """Searches the enclosure (container) for a specific item (num) and returns their coordinates (1-based)."""
+    """Searches the enclosure (container) for a specific item (num) and returns their coordinates (0-based)."""
     item_locations = []
 
     if num not in valid_ids:
@@ -32,10 +32,11 @@ def find_items(enclosure, num):
     for i, row in enumerate(enclosure):  # loop through rows (meters in height)
         for j, value in enumerate(row):  # loop through columns (meters in width)
             if value == num:  # Check if the item is present
-                item_locations.append((i + 1, j + 1))  # convert to 1-based indexing
+                item_locations.append((i, j))  # Keep 0-based indexing
 
     return item_locations
-#----------------------------------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Generate enclosure
 enclosure = generate_enclosure()
