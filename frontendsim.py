@@ -39,17 +39,19 @@ HEATMAP_COLOUR_SCALE = 1.75  # How quickly the heatmap will turn red
 HEATMAP_TRANSPARENCY_SCALE = 1.75  # How quickly the heatmap will be visible
 CHOSEN_CONTAINER = Container1
 
+# Simulation Display Variables
+XOFFSET = 25  # How far off on the X axis will the simulation be displayed
+YOFFSET = 25  # How far off on the Y axis will the simulation be displayed
+XBORDERLENGTH = 150  # How much empty space will be on the X
+YBORDERLENGTH = 100  # How much empty space will be on the Y 
+
 ######## Display Variables ###########
 # Diplay/screen Setup
 SCREEN_MULTIPLIER = 10 # Controls how big the screen will be.
-WIDTH, HEIGHT = len(CHOSEN_CONTAINER[0])*SCREEN_MULTIPLIER, len(CHOSEN_CONTAINER)*SCREEN_MULTIPLIER
+WIDTH, HEIGHT = len(CHOSEN_CONTAINER[0])*SCREEN_MULTIPLIER + XBORDERLENGTH, len(CHOSEN_CONTAINER)*SCREEN_MULTIPLIER + YBORDERLENGTH
 FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Simulation Window")
-
-# Simulation Display Variables
-XOFFSET = 25  # How far off on the X axis will the simulation be displayed
-YOFFSET = 25  # How far off on the Y axis will the simulation be displayed 
 
 # Color Variables
 WHITE = (255, 255, 255)
@@ -67,15 +69,15 @@ IMAGES['tree'] = pygame.image.load('assets/smalltree.png').convert_alpha()
 def turnArrayToPixels(arr):
     yLength = len(arr)
     xLength = len(arr[0])
-    xPixel = (WIDTH-2*XOFFSET)/xLength  # Pixel x length of each block
-    yPixel = (HEIGHT-2*YOFFSET)/yLength  # Pixel y length of each block
+    xPixel = math.floor((WIDTH-XBORDERLENGTH-2*XOFFSET)/xLength)  # Pixel x length of each block
+    yPixel = math.floor((HEIGHT-YBORDERLENGTH-2*YOFFSET)/yLength)  # Pixel y length of each block
     pixelArr = []
     for y in range(yLength):
         row = []
         for x in range(len(arr[y])):
 
             # row[0] is pixel x position, row[1] is pixel y length, row[2] is pixel x size, row[3] is pixel y size
-            row.append([XOFFSET + xPixel*x, YOFFSET + yPixel*y, xPixel+1, yPixel+1])
+            row.append([XOFFSET + xPixel*x, YOFFSET + yPixel*y, xPixel-1, yPixel-1])
         pixelArr.append(row)
     return xLength, yLength, pixelArr
 
@@ -96,13 +98,14 @@ def drawHeatmap(arr):
     for y in range(yLength):
         for x in range(xLength):
             pixel = pygame.Surface((pixelArr[y][x][2], pixelArr[y][x][3]))
-            pixel.set_alpha(150)  # transparency level
+            pixel.set_alpha(arr[y][x]*HEATMAP_SCALE*HEATMAP_TRANSPARENCY_SCALE)  # transparency level
             pixel.fill((255,max(255 - arr[y][x]*HEATMAP_SCALE*HEATMAP_COLOUR_SCALE, 0),0))
             screen.blit(pixel, (pixelArr[y][x][0], pixelArr[y][x][1]))
 
 
 ######## Simulation Loop #############
 running = True
+heatmapVisible = False
 while running:
     pygame.time.delay(FPS)
 
