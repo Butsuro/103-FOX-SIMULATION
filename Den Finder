@@ -47,10 +47,6 @@ container3 = [
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0],
 ]
 
-
-
-#-------------------------------------THE ACTUAL FUNCTION--------------------------------------------------------
-
 def find_items(enclosure, num):
     """Searches the enclosure (container) for a specific item (num) and returns their coordinates (1-based)."""
     item_locations = []
