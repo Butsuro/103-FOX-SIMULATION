@@ -54,12 +54,12 @@ container3 = [
 def find_items(enclosure, num):
     """Searches the enclosure (container) for a specific item (num) and returns their coordinates (1-based)."""
     item_locations = []
-
-    for i, row in enumerate(container3):  # loop through rows (meters in height)
-        for j, value in enumerate(row):  # loop through columns (meters in width)
-            if value == num:  # Check if the item is present
-                item_locations.append(np.array((i, j)))  # convert to 1-based indexing
-
+    # Iterate through each cell in the enclosure (2D list)
+    for i in range(len(enclosure)):
+        for j in range(len(enclosure[i])):
+            if enclosure[i][j] == num:
+                # Appending coordinates with 1-based indexing
+                item_locations.append((i, j))
     return item_locations
     
 
@@ -67,19 +67,11 @@ def find_items(enclosure, num):
 num = 1 # Change this to search for different items
 found_trees = find_items(container3, 1)
 
-# Display results
-print("Enclosure Map (Each 0 represents 1 meter):")
-for row in container3:
-    print(" ".join(map(str, row)))
-
-print(f"\nLocations of {num} ({valid_ids.get(num, 'Unknown')}):")
-print(found_trees)
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Den3 =[
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -130,76 +122,8 @@ def find_den(Den3, num):
  # Change this to search for different items
 found_den = find_den(Den3, num)
 
- # Display results
-print("Enclosure Map (Each 0 represents 1 meter):")
-for row in Den3:
-    print(" ".join(map(str, row)))
-
-print(f"\nLocations of {num} ({valid_ids.get(num, 'Unknown')}):")
-print(found_den)
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# finding overlaping areas 
-
-def find_overlapping_areas(container3, Den3):
-    """Finds overlapping areas between two grids where the items match and are non-zero."""
-    overlapping_areas = []
-
-    # Ensure both grids are the same size
-    if len(container3) != len(Den3) or len(container3[0]) != len(Den3[0]):
-        return "Error: Grids must be of the same size."
-
-    for i in range(len(container3)):  # Loop through rows
-        for j in range(len(container3[i])):  # Loop through columns
-            if container3[i][j] == Den3[i][j] and container3[i][j] :  # Check for match and non-zero
-                overlapping_areas.append(np.array((i, j)))  # Add coordinates (1-based indexing)
-
-    return overlapping_areas
-
-# Test the function with your grids
-overlapping_areas = find_overlapping_areas(container3, Den3)
-
-# Display the results
-print("Overlapping areas :")
-if isinstance(overlapping_areas, list) and overlapping_areas:
-    for area in overlapping_areas:
-        print(area)
-else:
-    print("No overlapping areas found.")
-
-#-------------------------------------------------------------------------------------------------------------
-
-
-# def distance(coord1, coord2):
-#     # Calculate the Euclidean distance between two coordinates
-#     dist = math.sqrt((coord2[0] - coord1[0]) ** 2 + (coord2[1] - coord1[1]) ** 2)
-#     return dist
-
-# def remove_close_coordinates(found_trees, found_den, radius=2):
-#     unique_coordinates = []
-
-#     for coord in found_trees:
-#         too_close = False
-#         # Check the distance between the coordinate from list1 and each coordinate from list2
-#         for coord2 in found_den:
-#             dist = distance(coord, coord2)
-#             if dist <= radius:  # If the distance is within the radius, don't add the coord from list1
-#                 too_close = True
-#                 print(f"Removing {coord} because it's within {radius} units of {coord2}. Distance = {dist:.4f}")
-#                 break
-
-        
-#         # Add the coordinate from list1 to the result only if it's not too close to any coordinate in list2
-#         if not too_close:
-#             unique_coordinates.append(coord)
-
-#     return unique_coordinates
-
-# result = remove_close_coordinates(found_trees, found_den)
-# print("\nFinal coordinates of available trees:")
-# print(result)
-
 #-------------------------------------------------------------------------------------------------------------------------------
+
 def distance(coord1, coord2):
     # Calculate the Euclidean distance between two coordinates
     dist = math.sqrt((coord2[0] - coord1[0]) ** 2 + (coord2[1] - coord1[1]) ** 2)
@@ -208,10 +132,7 @@ def distance(coord1, coord2):
 def remove_close_coordinates(found_trees, found_den, radius=2):
     unique_coordinates = []
 
-    if not found_trees:
-        print("No trees found to process.")
-        return []
-
+    
     if not found_den:
         print("No dens found to compare.")
         return found_trees  # If there are no dens, all tree coordinates are unique
@@ -223,7 +144,6 @@ def remove_close_coordinates(found_trees, found_den, radius=2):
             dist = distance(coord, coord2)
             if dist <= radius:  # If the distance is within the radius, don't add the coord from found_trees
                 too_close = True
-                print(f"Removing {coord} because it's within {radius} units of {coord2}. Distance = {dist:.4f}")
                 break
 
         # Add the coordinate from found_trees to the result only if it's not too close to any den
