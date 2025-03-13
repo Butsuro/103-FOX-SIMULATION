@@ -44,11 +44,8 @@ class Fox:
         self.direction = dirVector
         
     def atAThing(self, enclosure, item_id):# thing and fox are same position
-        itemList = find_items(enclosure, item_id)
-        for item in itemList:
-            if round(self.pos[1]) == item[0] and round(self.pos[0]) == item[1]:
+            if enclosure[round(self.pos[1])][round(self.pos[0])] == item_id:
                 return True
-                break
             else:
                 return False
            
@@ -95,11 +92,11 @@ def find_items(enclosure, item_id):
     return item_locations
 
 def exists(enclosure, item_id):# inputs thing and checks that thing
-    itemList = find_items(enclosure, item_id)
-    if len(itemList) != 0:
-        return True
-    else:
-        return False
+    for i, row in enumerate(enclosure):  # loop through rows (meters in height)
+        for j, value in enumerate(row):  # loop through columns (meters in width)
+            if value == item_id:  # Check if the item is present
+                return True
+    return False
 
 def createFoxAgents(numFoxes, numFamilies, startingPositions):
     foxAgents = []
