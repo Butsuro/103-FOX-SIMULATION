@@ -107,8 +107,9 @@ IMAGES['background'] = pygame.image.load('assets/background.png').convert_alpha(
 
 # Buttons
 buttons = {}
-buttons[0] = Button(1, "Display Heatmap", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
-buttons[1] = Button(2, "Display Traps", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
+buttons[0] = Button(1, "Toggle Grid", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
+buttons[1] = Button(2, "Display Heatmap", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
+buttons[2] = Button(3, "Display Traps", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
 
 
 ################################### Useful functions ###################################
@@ -129,8 +130,13 @@ def turnArrayToPixels(arr, pixelOffset):
     return xLength, yLength, pixelArr
 
 # Draws the environment array
-def drawEnvironment(arr):
-    xLength, yLength, pixelArr = turnArrayToPixels(arr, 1)
+def drawEnvironment(arr, gridsVisible):
+    if gridVisible:
+        pixelBorder = 1
+    else:
+        pixelBorder = 0
+
+    xLength, yLength, pixelArr = turnArrayToPixels(arr, pixelBorder)
 
     # Make environment background black
     for y in range(yLength):
@@ -162,6 +168,7 @@ def drawHeatmap(arr):
 running = True
 heatmapVisible = False
 trapsVisible = False
+gridVisible = True
 
 print(WIDTH, HEIGHT)
 
@@ -172,7 +179,7 @@ while running:
     screen.fill(BLACK)
     pygame.draw.rect(screen, BLACK, (X_OFFSET, Y_OFFSET, WIDTH - 2*X_OFFSET, HEIGHT - 2*Y_OFFSET))
     screen.blit(IMAGES["background"], (0, 0))
-    drawEnvironment(CHOSEN_CONTAINER)
+    drawEnvironment(CHOSEN_CONTAINER, gridVisible)
     if heatmapVisible:
         drawHeatmap(smoothed_array)
     
@@ -189,6 +196,9 @@ while running:
         for button in buttons.values():
             if button.isClicked(event):
                 buttonType = button.get()
+                
+                if buttonType == "Toggle Grid":
+                    gridVisible = not gridVisible
                 if buttonType == "Display Heatmap":
                     heatmapVisible = not heatmapVisible
 
