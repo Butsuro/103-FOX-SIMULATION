@@ -64,26 +64,33 @@ def BrainFOX(self, array):
    GoToFreind = 0.3
    FamilyTime = 0
    randomness = 0.1 
+   den_timer = 0
 
-   if Denning == 1:
+   if Denning >= 1:
        if DenQuantReached(self.family, array):
            Denning = 0
        if atathing("den", self):
+           den_timer = 1
            array[3][self.pos[0]][self.pos[1]] = self.family
            return [0, 0]
        else:
            return moveto("den", self)
+   if den_timer >= 1:
+       if DenQuantReached(self.family, array):
+           den_timer = 0
+       else:
+           den_timer = den_timer - (1/1200)
    if sleep_timer > 0:
-       sleep_timer = sleep_timer - 0.01
+       sleep_timer = sleep_timer - (1/36000)
        return [0,0]
-   if hunger == 1 and exists("food"):
+   if hunger >= 1 and exists("food"):
        if atathing("food", self):
            hunger = 0
            GOtoDEN = 1
            return moveto("den", self)
        else:
            return moveto("food", self)
-   if GOtoDEN == 1:
+   if GOtoDEN >= 1:
        if atathing("den+", self):
            GOtoDEN = 0
            return moveto("den+", self)
@@ -96,7 +103,7 @@ def BrainFOX(self, array):
        else:
            GOtoDEN = 1
            return moveto("den+", self)
-   if GoToFreind == 1:
+   if GoToFreind >= 1:
        if atathing("family", self):
             FamilyTime = 1
             GoToFreind = 0.3
@@ -104,7 +111,7 @@ def BrainFOX(self, array):
        else:
            return moveto("family", self)
    if FamilyTime > 0:
-        FamilyTime = FamilyTime - 0.01
+        FamilyTime = FamilyTime - (1/7200)
         return moveto("family", self)
        
    else:
