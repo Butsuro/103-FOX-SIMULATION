@@ -1,14 +1,26 @@
 import numpy as np
 import random as rd
 import math
-from time import sleep
+
 food_id = 6
+den_id = 10
+denplus_id = 11
+family_id = 12
+random_id = 13
+
 class Fox:
-    def __init__(self, fox_id, family, size, speed, pos, direction):
+    def __init__(self, fox_id, family,pos, direction):
         self.fox_id = fox_id
         self.family = family
-        self.size = size
-        self.speed = speed
+        self.hunger = 0
+        self.sleep_need = 0
+        self.sleep_timer = 0
+        self.Denning = 1
+        self.GOtoDEN = 0
+        self.GoToFreind = 0.3
+        self.FamilyTime = 0
+        self.randomness = 0.1
+        self.den_timer = 0
         self.pos = np.array(pos)
         self.direction = unitVector(np.array(direction))
     
@@ -83,100 +95,105 @@ class Fox:
 
     
     def BrainFOX(self, array):
-        hunger = 0
-        sleep_need = 0
-        sleep_timer = 0
-        Denning = 1
-        GOtoDEN = 0
-        GoToFreind = 0.3
-        FamilyTime = 0
-        randomness = 0.1 
+        hunger = self.hunger
+        sleep_need = self.sleep_need
+        sleep_timer = self.sleep_timer
+        Denning = self.Denning
+        GOtoDEN = self.GOtoDEN
+        GoToFreind = self.GoToFreind
+        FamilyTime = self.FamilyTime
+        randomness = self.randomness
+        den_timer = self.den_timer
 
-        if Denning == 1:
+        if Denning >= 1:
             if self.DenQuantReached(self.family, array):
-                Denning = 0
-            if self.atAThing(array, "den"):
-                array[3][self.pos[1]][self.pos[0]] = self.family
+                self.Denning = 0
+            if self.atAThing(array, den_id):
+                self.makeDen(array)
                 return [0, 0]
             else:
-                return self.moveTo(array, "den")
+                return self.moveTo(array, den_id)
+        if den_timer >= 1:
+            self.den_timer = den_timer - (1/1200)
+            return [0, 0]
         if sleep_timer > 0:
-            sleep_timer = sleep_timer - 0.01
+            self.sleep_timer = sleep_timer - (1/36000)
             return [0,0]
-        if hunger == 1 and exists("food"):
-            if self.atAThing(array, "food"):
-                hunger = 0
-                GOtoDEN = 1
-                return self.moveTo(array, "den")
+        if hunger >= 1 and exists(food_id):
+            if self.atAThing(array, food_id):
+                self.hunger = 0
+                self.GOtoDEN = 1
+                return self.moveTo(array, denplus_id)
             else:
-                return self.moveTo(array, "food")
-        if GOtoDEN == 1:
-            if self.atAThing(array, "den+"):
-                GOtoDEN = 0
-                return self.moveTo(array, "den+")
+                return self.moveTo(array, food_id)
+        if GOtoDEN >= 1:
+            if self.atAThing(array, denplus_id):
+                self.GOtoDEN = 0
+                self.den_timer = 1
+                return self.moveTo(array, denplus_id)
             else:
-                return self.moveTo(array, "den+")
+                return self.moveTo(array, denplus_id)
         if sleep_need >= 1:
-            if self.atAThing(array, "den+"):
-                sleep_timer =1
+            if self.atAThing(array, denplus_id):
+                self.sleep_timer =1
                 return [0, 0]
             else:
-                GOtoDEN = 1
-                return self.moveTo(array, "den+")
-        if GoToFreind == 1:
-            if self.atAThing(array, "family"):
-                FamilyTime = 1
-                GoToFreind = 0.3
-                return self.moveTo(array, "family")
+                self.GOtoDEN = 1
+                return self.moveTo(array, denplus_id)
+        if GoToFreind >= 1:
+            if self.atAThing(array, family_id):
+                self.FamilyTime = 1
+                self.GoToFreind = 0.3
+                return self.moveTo(array, family_id)
             else:
-                return self.moveTo(array, "family")
+                return self.moveTo(array, family_id)
         if FamilyTime > 0:
-            FamilyTime = FamilyTime - 0.01
-            return self.moveTo(array, "family")
+            self.FamilyTime = FamilyTime - (1/7200)
+            return self.moveTo(array, family_id)
        
         else:
             option = weighted_random_choice(hunger, sleep_need, sleep_timer, Denning, GOtoDEN, GoToFreind, randomness)
 
             if option == "Hunger":
-                hunger = 1
+                self.hunger = 1
                 return [0, 0]
 
 
             if option == "Sleep Need":
-                sleep_need = 0
-                sleep_timer = 1
+                self.sleep_need = 0
+                self.sleep_timer = 1
                 return [0, 0]
       
             if option == "Go to Den":
-                GOtoDEN = 1
-                return self.moveTo(array, "den+")
+                self.GOtoDEN = 1
+                return self.moveTo(array, denplus_id)
        
             if option == "Go to Friend":
-                GoToFreind = 1
-                return self.moveTo(array, "freind")
+                self.GoToFreind = 1
+                return self.moveTo(array, family_id)
       
             else:
-                return self.moveTo(array, "random")
+                return self.moveTo(array, random_id)
     
-def weighted_random_choice(a, b, c, d, e, f, g):
+def weighted_random_choice(a, b, c, d, e):
    # Define options and their dynamic weights
-        options = ["Hunger", "Sleep Need", "Sleep Timer", "Denning", "Go to Den", "Go to Friend", "Randomness"]
-        weights = [a, b, c, d, e, f, g]  # These values change each time the function runs
+   options = ["Hunger", "Sleep Need", "Go to Den", "Go to Friend", "Randomness"]
+   weights = [a, b, c, d, e]  # These values change each time the function runs
 
 
    # Normalize weights (only if they don't sum to 1, but not strictly necessary)
-        total_weight = sum(weights)
-        if total_weight > 0:
-            normalized_weights = [w / total_weight for w in weights]
-        else:
-            normalized_weights = weights  # Avoid division by zero (all weights are 0)
+   total_weight = sum(weights)
+   if total_weight > 0:
+       normalized_weights = [w / total_weight for w in weights]
+   else:
+       normalized_weights = weights  # Avoid division by zero (all weights are 0)
 
 
    # Select a random option based on the weights
-        selected_option = random.choices(options, weights=normalized_weights, k=1)[0]
+   selected_option = rd.choices(options, weights=normalized_weights, k=1)[0]
 
 
-        return selected_option
+   return selected_option
         
 def unitVector(vector):
     if np.linalg.norm(vector) != 1:
@@ -234,8 +251,8 @@ def moveCanid(foxAgentList, masterArray):
     #print(fox.fox_id, " ", fox.pos, " ", fox.direction)
     #fox.move(foxAgents)
     #print(fox.fox_id, " ", fox.pos)
-while(True):
-    print(foxAgents[0].pos, " ", foxAgents[0].direction)
-    for fox in foxAgents:
-        fox.move(foxAgents)
-    sleep(1)
+# while(True):
+#     print(foxAgents[0].pos, " ", foxAgents[0].direction)
+#     for fox in foxAgents:
+#         fox.move(foxAgents)
+#     sleep(1)
