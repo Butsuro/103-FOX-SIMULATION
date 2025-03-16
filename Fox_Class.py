@@ -72,15 +72,15 @@ class Fox:
         self.direction = unitVector(self.direction)
             
     def move(self, masterArray):
-        self.direction = self.BrainFOX(masterArray)
+        self.direction = np.array(self.BrainFOX(masterArray))
         self.boundaryCheck(xSize, ySize)
         if masterArray[1][round(self.pos[1])][round(self.pos[0])] == 0:
             self.pos = self.pos+self.direction
             masterArray[1][round(self.pos[1])][round(self.pos[0])] = self.fox_id
 
-    def turn(self, Level_sleep, Level_hunger):
-        Level_sleep = Level_sleep + 0.2
-        Level_hunger = Level_hunger + 0.2
+    #def turn(self, Level_sleep, Level_hunger):
+        #Level_sleep = Level_sleep + 0.2
+        #Level_hunger = Level_hunger + 0.2
 
 
     def DenQuantReached(self, family_num, array):
@@ -136,7 +136,7 @@ class Fox:
                 return self.moveTo(array, denplus_id)
         if sleep_need >= 1:
             if self.atAThing(array, denplus_id):
-                self.sleep_timer =1
+                self.sleep_timer = 1
                 return [0, 0]
             else:
                 self.GOtoDEN = 1
