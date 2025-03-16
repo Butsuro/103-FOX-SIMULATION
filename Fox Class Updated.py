@@ -41,7 +41,7 @@ class Fox:
         itemList = find_items(enclosure, item_id)
         closest = findClosest(self.pos, itemList)
         dirVector = unitVector(closest[0])
-        self.direction = dirVector
+        return dirVector
         
     def atAThing(self, enclosure, item_id):# thing and fox are same position
             if enclosure[round(self.pos[1])][round(self.pos[0])] == item_id:
@@ -64,6 +64,119 @@ class Fox:
         if masterArray[1][round(self.pos[1])][round(self.pos[0])] == 0:
             self.pos = self.pos+self.direction
             masterArray[1][round(self.pos[1])][round(self.pos[0])] = self.fox_id
+
+    def turn(self, Level_sleep, Level_hunger):
+        Level_sleep = Level_sleep + 0.2
+        Level_hunger = Level_hunger + 0.2
+
+
+    def DenQuantReached(self, family_num, array):
+        count = 0
+        for row in array[0]:
+            for num in row:
+                if num == family_num:
+                    count += 1
+        if count >= 3:
+            return True
+        else:
+            return False
+
+    
+    def BrainFOX(self, array):
+        hunger = 0
+        sleep_need = 0
+        sleep_timer = 0
+        Denning = 1
+        GOtoDEN = 0
+        GoToFreind = 0.3
+        FamilyTime = 0
+        randomness = 0.1 
+
+        if Denning == 1:
+            if self.DenQuantReached(self.family, array):
+                Denning = 0
+            if self.atAThing(array, "den"):
+                array[3][self.pos[1]][self.pos[0]] = self.family
+                return [0, 0]
+            else:
+                return self.moveTo(array, "den")
+        if sleep_timer > 0:
+            sleep_timer = sleep_timer - 0.01
+            return [0,0]
+        if hunger == 1 and exists("food"):
+            if self.atAThing(array, "food"):
+                hunger = 0
+                GOtoDEN = 1
+                return self.moveTo(array, "den")
+            else:
+                return self.moveTo(array, "food")
+        if GOtoDEN == 1:
+            if self.atAThing(array, "den+"):
+                GOtoDEN = 0
+                return self.moveTo(array, "den+")
+            else:
+                return self.moveTo(array, "den+")
+        if sleep_need >= 1:
+            if self.atAThing(array, "den+"):
+                sleep_timer =1
+                return [0, 0]
+            else:
+                GOtoDEN = 1
+                return self.moveTo(array, "den+")
+        if GoToFreind == 1:
+            if self.atAThing(array, "family"):
+                FamilyTime = 1
+                GoToFreind = 0.3
+                return self.moveTo(array, "family")
+            else:
+                return self.moveTo(array, "family")
+        if FamilyTime > 0:
+            FamilyTime = FamilyTime - 0.01
+            return self.moveTo(array, "family")
+       
+        else:
+            option = weighted_random_choice(hunger, sleep_need, sleep_timer, Denning, GOtoDEN, GoToFreind, randomness)
+
+            if option == "Hunger":
+                hunger = 1
+                return [0, 0]
+
+
+            if option == "Sleep Need":
+                sleep_need = 0
+                sleep_timer = 1
+                return [0, 0]
+      
+            if option == "Go to Den":
+                GOtoDEN = 1
+                return self.moveTo(array, "den+")
+       
+            if option == "Go to Friend":
+                GoToFreind = 1
+                return self.moveTo(array, "freind")
+      
+            else:
+                return self.moveTo(array, "random")
+    
+def weighted_random_choice(a, b, c, d, e, f, g):
+   # Define options and their dynamic weights
+        options = ["Hunger", "Sleep Need", "Sleep Timer", "Denning", "Go to Den", "Go to Friend", "Randomness"]
+        weights = [a, b, c, d, e, f, g]  # These values change each time the function runs
+
+
+   # Normalize weights (only if they don't sum to 1, but not strictly necessary)
+        total_weight = sum(weights)
+        if total_weight > 0:
+            normalized_weights = [w / total_weight for w in weights]
+        else:
+            normalized_weights = weights  # Avoid division by zero (all weights are 0)
+
+
+   # Select a random option based on the weights
+        selected_option = random.choices(options, weights=normalized_weights, k=1)[0]
+
+
+        return selected_option
         
 def unitVector(vector):
     if np.linalg.norm(vector) != 1:
