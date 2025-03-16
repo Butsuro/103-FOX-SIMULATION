@@ -55,7 +55,9 @@ class Fox:
         dirVector = unitVector(closest[0])
         return dirVector
         
-    def atAThing(self, enclosure, item_id):# thing and fox are same position
+    def atAThing(self, enclosure, item_id):
+        # thing and fox are same position
+        
             if enclosure[round(self.pos[1])][round(self.pos[0])] == item_id:
                 return True
             else:
@@ -105,6 +107,7 @@ class Fox:
         FamilyTime = self.FamilyTime
         randomness = self.randomness
         den_timer = self.den_timer
+        family_id = self.family
 
         if Denning >= 1:
             if self.DenQuantReached(self.family, array):
@@ -121,26 +124,26 @@ class Fox:
             self.sleep_timer = sleep_timer - (1/36000)
             return [0,0]
         if hunger >= 1 and exists(food_id):
-            if self.atAThing(array, food_id):
+            if self.atAThing(array[4], food_id):
                 self.hunger = 0
                 self.GOtoDEN = 1
-                return self.moveTo(array, denplus_id)
+                return self.moveTo(array[3], denplus_id)
             else:
-                return self.moveTo(array, food_id)
+                return self.moveTo(array[4], food_id)
         if GOtoDEN >= 1:
-            if self.atAThing(array, denplus_id):
+            if self.atAThing(array[3], denplus_id):
                 self.GOtoDEN = 0
                 self.den_timer = 1
-                return self.moveTo(array, denplus_id)
+                return self.moveTo(array[3], denplus_id)
             else:
-                return self.moveTo(array, denplus_id)
+                return self.moveTo(array[3], denplus_id)
         if sleep_need >= 1:
-            if self.atAThing(array, denplus_id):
+            if self.atAThing(array[3], denplus_id):
                 self.sleep_timer = 1
                 return [0, 0]
             else:
                 self.GOtoDEN = 1
-                return self.moveTo(array, denplus_id)
+                return self.moveTo(array[3], denplus_id)
         if GoToFreind >= 1:
             if self.atAThing(array, family_id):
                 self.FamilyTime = 1
@@ -232,7 +235,7 @@ def exists(enclosure, item_id):# inputs thing and checks that thing
 def createFoxAgents(numFoxes, numFamilies, startingPositions):
     foxAgents = []
     for i in range(numFoxes):
-        foxAgents.append(Fox(i+1, rd.randint(1,numFamilies), rd.uniform(1,5), rd.uniform(35,55), startingPositions[0], startingPositions[1], [0,0]))
+        foxAgents.append(Fox(i+1, rd.randint(1,numFamilies), rd.uniform(1,5), rd.uniform(35,55), startingPositions[i][0], startingPositions[i][1], [0,0]))
         
 def moveCanid(foxAgentList, masterArray):
     counter = 0
