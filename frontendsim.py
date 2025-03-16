@@ -114,6 +114,7 @@ buttons[2] = Button(3, "Display Traps", (76, 196, 134), (154, 226, 187), (255, 2
 
 ################################### Useful functions ###################################
 # Returns an array of pixel sizes/location for each index in a 2D array, as well as the X and Y length of the array
+# Requires a 2D array, and a pixel Offset amount (basically border size, 0 for no border)
 def turnArrayToPixels(arr, pixelOffset):
     yLength = len(arr)
     xLength = len(arr[0])
