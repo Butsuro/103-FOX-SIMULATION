@@ -72,6 +72,7 @@ class Fox:
         self.direction = unitVector(self.direction)
             
     def move(self, masterArray):
+        self.direction = self.BrainFOX(masterArray)
         self.boundaryCheck(xSize, ySize)
         if masterArray[1][round(self.pos[1])][round(self.pos[0])] == 0:
             self.pos = self.pos+self.direction
