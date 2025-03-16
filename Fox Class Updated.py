@@ -230,7 +230,7 @@ def exists(enclosure, item_id):# inputs thing and checks that thing
 
 def createFoxAgents(numFoxes, numFamilies, startingPositions):
     foxAgents = []
-    for i in range(numFoxes-1):
+    for i in range(numFoxes):
         foxAgents.append(Fox(i+1, rd.randint(1,numFamilies), rd.uniform(1,5), rd.uniform(35,55), startingPositions[0], startingPositions[1], [0,0]))
         
 def moveCanid(foxAgentList, masterArray):
