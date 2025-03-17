@@ -55,7 +55,7 @@ def find_items(enclosure, num):
         for j in range(len(enclosure[i])):
             if enclosure[i][j] == num:
                 # Appending coordinates with 1-based indexing
-                item_locations.append((i, j))
+                item_locations.append((j, i))
     return item_locations
     
 
