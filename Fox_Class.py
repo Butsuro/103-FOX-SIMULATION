@@ -112,11 +112,13 @@ class Fox:
         if Denning >= 1:
             if self.DenQuantReached(self.family, array):
                 self.Denning = 0
-            if self.atAThing(array, den_id):
+            denLocations = find_den####
+            closest = findClosest(self.pos, denLocations)
+            if denLocations[closest[2]][0] == self.pos[0] and denLocations[closest[2]][1] == self.pos[1]:
                 self.makeDen(array)
                 return [0, 0]
             else:
-                return self.moveTo(array, den_id)
+                return closest[0]
         if den_timer >= 1:
             self.den_timer = den_timer - (1/1200)
             return [0, 0]
