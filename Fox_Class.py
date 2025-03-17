@@ -147,12 +147,13 @@ class Fox:
                 self.GOtoDEN = 1
                 return self.moveTo(array[3], denplus_id)
         if GoToFreind >= 1:
-            if self.atAThing(array, family_id):
+            closestFriend = self.closestCanidFriend(foxAgentList)
+            if closestFriend[1] <= 1.3:
                 self.FamilyTime = 1
                 self.GoToFreind = 0.3
-                return self.moveTo(array, family_id)
+                return [0,0] #changed from return self.moveTo(array, family_id)
             else:
-                return self.moveTo(array, family_id)
+                return closest[0]
         if FamilyTime > 0:
             self.FamilyTime = FamilyTime - (1/7200)
             return self.moveTo(array, family_id)
