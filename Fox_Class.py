@@ -26,7 +26,7 @@ class Fox:
         for fox in foxAgentList:
             if fox.fox_id == self.fox_id: continue
             foxPositionList.append([fox.pos, fox.family])
-            return foxPositionList
+        return foxPositionList
     
     def closestCanid(self, foxAgentList):
         foxPositionList = self.canidList(foxAgentList)
@@ -221,6 +221,7 @@ def unitVector(vector):
 def findClosest(canidPosition, positionList):
         lowestDist = None
         counter = 0
+        arrayPosition = -1
         for position in positionList:
             if lowestDist is None or lowestDist > np.linalg.norm(position-canidPosition):
                 distVector = np.array(position-canidPosition)
