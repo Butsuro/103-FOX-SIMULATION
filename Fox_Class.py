@@ -26,6 +26,7 @@ class Fox:
         for fox in foxAgentList:
             if fox.fox_id == self.fox_id: continue
             foxPositionList.append([fox.pos, fox.family])
+            return canidList
     
     def closestCanid(self, foxAgentList):
         foxPositionList = self.canidList(foxAgentList)
@@ -44,8 +45,8 @@ class Fox:
         lowestDist = None
         counter = 0
         for fox in foxPositionList:
-            if (lowestDist is None or lowestDist > np.linalg.norm(position-canidPosition)) and self.family == fox.family:
-                distVector = np.array(position-canidPosition)
+            if (lowestDist is None or lowestDist > np.linalg.norm(fox[0]-self.position)) and self.family == fox[1]:
+                distVector = np.array(fox[0]-self.position)
                 lowestDist = np.linalg.norm(distVector)
                 arrayPosition = counter
                 distVector = unitVector(distVector)
@@ -213,7 +214,7 @@ def weighted_random_choice(a, b, c, d, e):
    return selected_option
         
 def unitVector(vector):
-    if np.linalg.norm(vector) != 1:
+    if np.linalg.norm(vector) != 1 or np.linalg.norm(vector) != 0:
         vector /= np.linalg.norm(vector)
     return vector
 
@@ -231,12 +232,10 @@ def findClosest(canidPosition, positionList):
 
 def find_items(enclosure, item_id):
     item_locations = []
-    if item_id not in valid_ids:
-        return []  # return empty list if num is not a known ID
     for i, row in enumerate(enclosure):  # loop through rows (meters in height)
         for j, value in enumerate(row):  # loop through columns (meters in width)
             if value == item_id:  # Check if the item is present
-                item_locations.append(np.array(j, i))
+                item_locations.append(np.array((j, i)))
     return item_locations
 
 def exists(enclosure, item_id):# inputs thing and checks that thing
