@@ -41,13 +41,23 @@ class Fox:
                 dirVector *= rd.uniform(1,2)
                 self.direction = unitVector(self.direction+dirVector)
             else: self.direction = unitVector(self.direction-dirVector)
+
+    def closestCanidFriend(self, foxAgentList):
+        foxPositionList = self.canidList(foxAgentList)
+        lowestDist = None
+        counter = 0
+        for fox in foxPositionList:
+            if (lowestDist is None or lowestDist > np.linalg.norm(position-canidPosition)) and self.family == fox.family:
+                distVector = np.array(position-canidPosition)
+                lowestDist = np.linalg.norm(distVector)
+                arrayPosition = counter
+                distVector = unitVector(distVector)
+        return [distVector, lowestDist, arrayPosition]
     
-    def findClosestFood(self, enclosure):
-        foodList = find_items(enclosure, food_id)
-        closest = findClosest(self.pos, foodList)
-        dirVector = unitVector(closest[0])
-        distance = closest[1]
-        self.direction = dirVector
+    def findDenRadius(self, enclosure):
+        familyDens = find_items(enclosure[3], self.family)
+        closestDen = findClosest(self.pos, familyDens)
+        return closestDen
     
     def moveTo(self, enclosure, item_id): #inputs a thing and a fox, returns the direction vector to a fox
         itemList = find_items(enclosure, item_id)
@@ -113,12 +123,12 @@ class Fox:
             if self.DenQuantReached(self.family, array):
                 self.Denning = 0
             denLocations = find_den####
-            closest = findClosest(self.pos, denLocations)
+            closestDen = findClosest(self.pos, denLocations)
             if denLocations[closest[2]][0] == self.pos[0] and denLocations[closest[2]][1] == self.pos[1]:
                 self.makeDen(array)
                 return [0, 0]
             else:
-                return closest[0]
+                return closestDen[0]
         if den_timer >= 1:
             self.den_timer = den_timer - (1/1200)
             return [0, 0]
@@ -153,10 +163,11 @@ class Fox:
                 self.GoToFreind = 0.3
                 return [0,0] #changed from return self.moveTo(array, family_id)
             else:
-                return closest[0]
+                return closestFriend[0]
         if FamilyTime > 0:
             self.FamilyTime = FamilyTime - (1/7200)
-            return self.moveTo(array, family_id)
+            closestFriend = self.closestCanidFriend(foxAgentList)
+            return closestFriend[0]
        
         else:
             option = weighted_random_choice(hunger, sleep_need, sleep_timer, Denning, GOtoDEN, GoToFreind, randomness)
@@ -177,7 +188,8 @@ class Fox:
        
             if option == "Go to Friend":
                 self.GoToFreind = 1
-                return self.moveTo(array, family_id)
+                closestFriend = self.closestCanidFriend(foxAgentList)
+                return closestFriend[0]
       
             else:
                 return self.moveTo(array, random_id)
@@ -216,6 +228,7 @@ def findClosest(canidPosition, positionList):
                 distVector = np.array(position-canidPosition)
                 lowestDist = np.linalg.norm(distVector)
                 arrayPosition = counter
+                distVector = unitVector(distVector)
         return [distVector, lowestDist, arrayPosition]
 
 def find_items(enclosure, item_id):
