@@ -22,11 +22,11 @@ class Fox:
         self.direction = unitVector(np.array(direction))
     
     def canidList(self, foxAgentList):
-        foxPositionList = [[]]
+        foxPositionList = []
         for fox in foxAgentList:
             if fox.fox_id == self.fox_id: continue
             foxPositionList.append([fox.pos, fox.family])
-            return canidList
+            return foxPositionList
     
     def closestCanid(self, foxAgentList):
         foxPositionList = self.canidList(foxAgentList)
@@ -45,8 +45,8 @@ class Fox:
         lowestDist = None
         counter = 0
         for fox in foxPositionList:
-            if (lowestDist is None or lowestDist > np.linalg.norm(fox[0]-self.position)) and self.family == fox[1]:
-                distVector = np.array(fox[0]-self.position)
+            if (lowestDist is None or lowestDist > np.linalg.norm(fox[0]-self.pos)) and self.family == fox[1]:
+                distVector = np.array(fox[0]-self.pos)
                 lowestDist = np.linalg.norm(distVector)
                 arrayPosition = counter
                 distVector = unitVector(distVector)
@@ -133,7 +133,7 @@ class Fox:
         if sleep_timer > 0:
             self.sleep_timer = sleep_timer - (1/36000)
             return [0,0]
-        if hunger >= 1 and exists(food_id):
+        if hunger >= 1 and exists(array[4], food_id):
             if self.atAThing(array[4], food_id):
                 self.hunger = 0
                 self.GOtoDEN = 1
@@ -141,7 +141,7 @@ class Fox:
             else:
                 return self.moveTo(array[4], food_id)
         if GOtoDEN >= 1:
-            closestDenRadius = findDenRadius(array)
+            closestDenRadius = self.findDenRadius(array)
             if closestDenRadius[1] <= 2:
                 self.GOtoDEN = 0
                 self.den_timer = 1
@@ -214,7 +214,7 @@ def weighted_random_choice(a, b, c, d, e):
    return selected_option
         
 def unitVector(vector):
-    if np.linalg.norm(vector) != 1 or np.linalg.norm(vector) != 0:
+    if np.linalg.norm(vector) != 1 and np.linalg.norm(vector) != 0:
         vector /= np.linalg.norm(vector)
     return vector
 
@@ -222,11 +222,11 @@ def findClosest(canidPosition, positionList):
         lowestDist = None
         counter = 0
         for position in positionList:
-            counter += 1
             if lowestDist is None or lowestDist > np.linalg.norm(position-canidPosition):
                 distVector = np.array(position-canidPosition)
                 lowestDist = np.linalg.norm(distVector)
                 arrayPosition = counter
+                counter += 1
                 distVector = unitVector(distVector)
         return [distVector, lowestDist, arrayPosition]
 
