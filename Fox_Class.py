@@ -122,7 +122,7 @@ class Fox:
                 self.Denning = 0
             denLocations = find_den_locations(array, self.family)
             closestDen = findClosest(self.pos, denLocations)
-            if denLocations[closest[2]][0] == round(self.pos[0]) and denLocations[closest[2]][1] == round(self.pos[1]):
+            if denLocations[closestDen[2]][0] == round(self.pos[0]) and denLocations[closestDen[2]][1] == round(self.pos[1]):
                 self.makeDen(array)
                 return [0, 0]
             else:
@@ -226,8 +226,8 @@ def findClosest(canidPosition, positionList):
                 distVector = np.array(position-canidPosition)
                 lowestDist = np.linalg.norm(distVector)
                 arrayPosition = counter
-                counter += 1
                 distVector = unitVector(distVector)
+            counter += 1
         return [distVector, lowestDist, arrayPosition]
 
 def find_items(enclosure, item_id):
