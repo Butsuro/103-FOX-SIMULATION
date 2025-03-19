@@ -1,13 +1,6 @@
 import random
 import Masterarray as MA
 
-
-
-def turn(Level_sleep, Level_hunger):
-   Level_sleep = Level_sleep + 0.2
-   Level_hunger = Level_hunger + 0.2
-
-
 def DenQuantReached(family_num, array):
    count = 0
    for row in array[0]:
