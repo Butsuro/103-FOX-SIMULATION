@@ -15,3 +15,5 @@ def spawnitems(array_3d, num_items, layer, item_type):
  
         for i,j in selected_spots:
             array_3d[layer][i][j] = item_type
+        
+        return array_3d
