@@ -74,27 +74,26 @@ class Fox:
     def makeDen(self, masterArray):
         masterArray[3][self.pos[1]][self.pos[0]] = self.family
     
-    def boundaryCheck(self, xSize, ySize):
-        if self.pos[0]+self.direction[0] < 0 or self.pos[0]+self.direction[0] > xSize:
-            self.direction[0] += -1*self.direction[0]*rd.uniform(1,2)
-        if self.pos[1]+self.direction[1] < 0 or self.pos[1]+self.direction[1] > ySize:
-            self.direction[1] += -1*self.direction[1]*rd.uniform(1,2)
-        self.direction = unitVector(self.direction)
+    def boundaryCheck(self,array):
+        if array[0][self.pos[0]+self.direction[0]][self.pos[1]+self.direction[1]] == 4 or array[0][self.pos[0]+self.direction[0]][self.pos[1]+self.direction[1]] == 0:
+            self.direction[0] = 0
+            self.direction[1] = 0
+        if array[1][self.pos[0]+self.direction[0]][self.pos[1]+self.direction[1]] != 4:
+            self.direction[0] = 0
+            self.direction[1] = 0
+        else:
+            self.direction = unitVector(self.direction)
             
     def move(self, masterArray):
         self.direction = np.array(self.BrainFOX(masterArray))
-        self.boundaryCheck(xSize, ySize)
+        self.boundaryCheck(masterArray)
         if masterArray[1][round(self.pos[1])][round(self.pos[0])] == 0:
             self.pos = self.pos+self.direction
             masterArray[1][round(self.pos[1])][round(self.pos[0])] = self.fox_id
 
-    #def turn(self, Level_sleep, Level_hunger):
-        #Level_sleep = Level_sleep + 0.2
-        #Level_hunger = Level_hunger + 0.2
-
-
-    def DenQuantReached(self, family_num, array):
+    def DenQuantReached(self, array):
         count = 0
+        family_num = self.family
         for row in array[0]:
             for num in row:
                 if num == family_num:
@@ -105,7 +104,7 @@ class Fox:
             return False
 
     
-        def BrainFOX(self, array, foxAgentList):
+    def BrainFOX(self, array, foxAgentList):
         hunger = self.hunger
         sleep_need = self.sleep_need
         sleep_timer = self.sleep_timer
@@ -117,8 +116,14 @@ class Fox:
         den_timer = self.den_timer
         denplus_id = self.family
 
+        self.hunger += 1/86400
+        self.GOtoDEN += 1/25200
+        self.FamilyTime += 1/10000
+        self.sleep_need += 1/50400
+            
+
         if Denning >= 1:
-            if self.DenQuantReached(self.family, array):
+            if self.DenQuantReached(array[3]):
                 self.Denning = 0
             denLocations = find_den_locations(array, self.family)
             closestDen = findClosest(self.pos, denLocations)
@@ -167,9 +172,10 @@ class Fox:
             self.FamilyTime = FamilyTime - (1/7200)
             closestFriend = self.closestCanidFriend(foxAgentList)
             return closestFriend[0]
-       
+        
         else:
-            option = weighted_random_choice(hunger, sleep_need, sleep_timer, Denning, GOtoDEN, GoToFreind, randomness)
+            
+            option = weighted_random_choice(hunger, sleep_need, GOtoDEN, GoToFreind, randomness)
 
             if option == "Hunger":
                 self.hunger = 1

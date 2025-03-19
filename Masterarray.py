@@ -6,6 +6,7 @@ import numpy as np
 # 3 [2] -> Tracking Layer
 # 4 [3] -> Dens
 # 5 [4] -> Food
+# 6 [5] -> traps
 
 Master1 = np.zeros((5, (20*3), (12*3)))
 Master2 = np.zeros((5, (16*3), (12*3)))
