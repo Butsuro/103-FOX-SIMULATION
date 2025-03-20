@@ -87,9 +87,9 @@ class Fox:
     def move(self, masterArray):
         self.direction = np.array(self.BrainFOX(masterArray))
         self.boundaryCheck(masterArray)
-        if masterArray[1][round(self.pos[1])][round(self.pos[0])] == 0:
-            self.pos = self.pos+self.direction
-            masterArray[1][round(self.pos[1])][round(self.pos[0])] = self.fox_id
+        self.pos = self.pos+self.direction
+        masterArray[1][round(self.pos[1])][round(self.pos[0])] = self.fox_id
+        return masterArray
 
     def DenQuantReached(self, array):
         count = 0
@@ -257,14 +257,6 @@ def createFoxAgents(numFoxes, numFamilies, startingPositions):
     for i in range(numFoxes):
         foxAgents.append(Fox(i+1, rd.randint(1,numFamilies), rd.uniform(1,5), rd.uniform(35,55), startingPositions[i][0], startingPositions[i][1], [0,0]))
         
-def moveCanid(foxAgentList, masterArray):
-    counter = 0
-    while(True):
-        hour = int(counter/3600)
-        day = int(hour/24)
-        counter += 1
-        for fox in foxAgentList:
-            fox.move(masterArray)
 
 def find_den(Den3, num):
     """Searches the enclosure (container) for a specific item (num) and returns their coordinates (1-based)."""

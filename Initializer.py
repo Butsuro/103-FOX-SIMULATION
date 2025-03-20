@@ -24,6 +24,7 @@ Master_array = pick_array(enclosure_num)
 
 ##FOX spawn
 foxAgentList = []
+spawn_pos = []
 def fox_spawn():
     fox_count = 0
     family_count = 0
@@ -31,17 +32,20 @@ def fox_spawn():
         family_count += 1
         for count in range(family):
             fox_count += 1
-            # spawn foxes somehow
+            foxAgentList.append(F_CLASS.Fox(fox_id= fox_count, family= family_count, pos= spawn_pos[fox_count-1], direction= [0, 0]))
+            Master_array[1][spawn_pos[fox_count-1][0]][spawn_pos[fox_count-1][1]] = fox_count
 
 
-
+# Actual sim
+Master_array = pick_array(enclosure_num)
+fox_spawn()
 
 counter = 0
 max_time =  enclosure_time * 86400
 while(counter < max_time):
     counter += 1
     if counter % 86400 == 0:
-        Master_array = FS.spawnitems(Master_array, Food_per_turn, )
+        Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
     else:
         for fox in foxAgentList: 
-            fox.move(Master_array)
+            Master_array = fox.move(Master_array)
