@@ -12,19 +12,27 @@ num_each_fam = [3, 7, 3]
 # these are things we can adjust
 Food_per_turn= 13
 
+#Master array declaration
+height = 0
+width = 0
 def pick_array(encolusure_num):
     if encolusure_num == 1:
+        height = 20*3
+        width = 12*3
         return MA.Master1
     if encolusure_num == 2:
+        height = 16*3
+        width = 12*3
         return MA.Master2
     else:
+        height = 13*3
+        width = 12*3
         return MA.Master3
-    
 Master_array = pick_array(enclosure_num)
 
 ##FOX spawn
 foxAgentList = []
-spawn_pos = []
+spawn_pos = FS.generate_spawn_points(1, height, width, Master_array[0])
 def fox_spawn():
     fox_count = 0
     family_count = 0
@@ -37,7 +45,6 @@ def fox_spawn():
 
 
 # Actual sim
-Master_array = pick_array(enclosure_num)
 fox_spawn()
 
 counter = 0
