@@ -19,8 +19,9 @@ BLACK = (0, 0, 0)
 SLIDER_WIDTH = 100
 SLIDER_HEIGHT = 10
 KNOB_RADIUS = 10
-SLIDER_TEXT_FONT = pygame.font.Font(None, 25)
+SLIDER_TEXT_FONT = pygame.font.Font(None, 22)
 SLIDER_NUMBER_FONT = pygame.font.Font(None, 25)
+SUBTEXT_FONT = pygame.font.Font(None, 15)
 
 BUTTON_FONT = pygame.font.Font(None, 20)
 
@@ -34,7 +35,7 @@ class Slider:
         self.knobPos = pos[0]
         self.rect = pygame.Rect(pos[0], pos[1], SLIDER_WIDTH, SLIDER_HEIGHT)
         self.dragging = False
-        self.value = 0
+        self.value = 1
 
     # Draw the slider
     def draw(self, screen):
@@ -123,29 +124,47 @@ class Button:
         return False
 
 
+## Page 1
 # Sliders
-sliders = {}
-sliders[0] = Slider(100, [75, 100], "How many days have the canids been in the enclosure")
-sliders[1] = Slider(11, [75, 200], "How many social groups/families")
-sliders[2] = Slider(20, [75, 300], "How many canids in the enclosure")
+sliders_1 = {}
+sliders_1[0] = Slider(100, [75, 100], "How many days have the canids been in the enclosure")
+sliders_1[1] = Slider(11, [75, 200], "How many social groups/families")
+sliders_1[2] = Slider(20, [75, 300], "How many canids in the enclosure")
 
 # Buttons
-buttons = {}
-buttons[0] = Button([450, 180], [80,30], "Enclosure 1", RED, GRAY, WHITE)
-buttons[1] = Button([450 + 90, 180], [80,30], "Enclosure 2", RED, GRAY, WHITE)
-buttons[2] = Button([450 + 180, 180], [80,30], "Enclosure 3", RED, GRAY, WHITE)
-buttons[3] = Button([100, 440], [80,30], "Fox", RED, GRAY, WHITE)
-buttons[4] = Button([210, 440], [80,30], "Coyote", RED, GRAY, WHITE)
-buttons[5] = Button([600, 500], [100,50], "Next", RED, GRAY, WHITE)
+buttons_1 = {}
+buttons_1[0] = Button([450, 180], [80,30], "Enclosure 1", RED, GRAY, WHITE)
+buttons_1[1] = Button([450 + 90, 180], [80,30], "Enclosure 2", RED, GRAY, WHITE)
+buttons_1[2] = Button([450 + 180, 180], [80,30], "Enclosure 3", RED, GRAY, WHITE)
+buttons_1[3] = Button([100, 440], [80,30], "Foxes", RED, GRAY, WHITE)
+buttons_1[4] = Button([210, 440], [80,30], "Coyotes", RED, GRAY, WHITE)
+buttons_1[5] = Button([600, 500], [100,50], "Next", RED, GRAY, WHITE)
 
-################################### Useful Formulas ###################################
+
+################################### Useful Formulas/Functions ###################################
+def createSecondPage(numFamilies, canidType): # Returns the sliders and buttons as a table for the second page
+    page_2 = {}
+    slider_table = {}
+    button_table = {}
+    for i in range(numFamilies):
+        slider = Slider(20, [50 + 250*math.floor(i/4), 100 + i%4*100], f"How many {canidType} in family {i + 1}")
+        slider_table[i] = slider
+
+    button_table[0] = Button([50, 500], [100,50], "Back", RED, GRAY, WHITE)
+    button_table[1] = Button([550, 500], [200,50], "Start Simulation", RED, GRAY, WHITE)
+
+    page_2[0] = slider_table
+    page_2[1] = button_table
+
+    return page_2
+
 def incrementPixelCalculator(mouse_x, slider_x, slider_width, slider_inc): # Used for determining the amount of pixels the mouse needs to move for the next increment
     slider_pixel_inc = math.floor((mouse_x - slider_x)/(slider_width/slider_inc))*slider_width/slider_inc
     return slider_pixel_inc
 
 def sliderValueCalculator(mouse_x, slider_x, slider_width, slider_inc): # Used for determining the actual value from the slider 
     slider_val = round(max(0, min((mouse_x - slider_x)/(slider_width/slider_inc), slider_inc)))
-    return slider_val
+    return slider_val + 1
 
 ################################### Main Loop ###################################
 running = True
@@ -153,7 +172,15 @@ page = 1
 chosenCanid = "Foxes"
 families = 1
 canids = 1
+days = 1
 chosenEnclosure = 1
+canidsPerFamily = []
+
+firstPage = {}
+firstPage[0] = sliders_1
+firstPage[1] = buttons_1
+
+secondPage = {}
 
 while running:
     pygame.time.delay(FPS)  # Control frame rate
@@ -161,10 +188,22 @@ while running:
     # Override previous fills
     screen.fill(WHITE)
 
-    enclosureText = SLIDER_TEXT_FONT.render("Select an Enclosure", True, BLACK)
-    screen.blit(enclosureText, (500, 150))
-    speciesText = SLIDER_TEXT_FONT.render("Select a Canid", True, BLACK)
-    screen.blit(speciesText, (135, 395))
+    # Update page to corresponding number
+    if page == 1:
+        sliders = firstPage[0]
+        buttons = firstPage[1]
+        enclosureText = SLIDER_TEXT_FONT.render("Select an Enclosure", True, BLACK)
+        screen.blit(enclosureText, (500, 150))
+        speciesText = SLIDER_TEXT_FONT.render("Select a Canid", True, BLACK)
+        screen.blit(speciesText, (140, 415))
+        enclosureSelectionText = SUBTEXT_FONT.render(f"Chosen enclosure: {chosenEnclosure}", True, BLACK)
+        screen.blit(enclosureSelectionText, (520, 220))
+        speciesSelectionText = SUBTEXT_FONT.render(f"Chosen canid: {chosenCanid}", True, BLACK)
+        screen.blit(speciesSelectionText, (135, 480))
+
+    if page == 2:
+        sliders = secondPage[0]
+        buttons = secondPage[1]
 
     # Draw sliders
     for slider in sliders.values():
@@ -177,15 +216,44 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+        # Check all buttons and map them with a function
+        for button in buttons.values():
+            if button.isClicked(event):
+                buttonType = button.get()
+                    
+                if buttonType == "Next":
+                    days = sliders[0].getValue()
+                    families = sliders[1].getValue()
+                    canids = sliders[2].getValue()
+                    page = 2
+                    secondPage = createSecondPage(families, chosenCanid)
+                if buttonType == "Back":
+                    page -= 1
+                if buttonType == "Start Simulation":
+                    # Run the simulation
+                    for i in range(families):
+                        canidsPerFamily.append(sliders[i].getValue())
+                    print(canidsPerFamily)
+                    running = False
+                    import frontendsim
+                if buttonType == "Foxes":
+                    chosenCanid = "Foxes"
+                if buttonType == "Coyotes":
+                    chosenCanid = "Coyotes"
+                if buttonType == "Enclosure 1":
+                    chosenEnclosure = 1
+                if buttonType == "Enclosure 2":
+                    chosenEnclosure = 2
+                if buttonType == "Enclosure 3":
+                    chosenEnclosure = 3
         
         # Check sliders
         for slider in sliders.values():
             slider.isSliding(event)
-            
-    pygame.display.update()
+
+    if running:
+        pygame.display.update()
 
 # Quit Pygame
 pygame.quit()
-
-# Run the simulation
-import frontendsim
