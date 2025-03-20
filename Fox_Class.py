@@ -84,11 +84,12 @@ class Fox:
         else:
             self.direction = unitVector(self.direction)
             
-    def move(self, masterArray):
-        self.direction = np.array(self.BrainFOX(masterArray))
+    def move(self, masterArray, AgentList):
+        self.direction = np.array(self.BrainFOX(masterArray, AgentList))
         self.boundaryCheck(masterArray)
         self.pos = self.pos+self.direction
         masterArray[1][round(self.pos[1])][round(self.pos[0])] = self.fox_id
+        masterArray[2][round(self.pos[1])][round(self.pos[0])] += 1
         return masterArray
 
     def DenQuantReached(self, array):

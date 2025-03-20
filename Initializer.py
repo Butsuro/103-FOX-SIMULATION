@@ -55,4 +55,4 @@ while(counter < max_time):
         Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
     else:
         for fox in foxAgentList: 
-            Master_array = fox.move(Master_array)
+            Master_array = fox.move(Master_array, foxAgentList)
