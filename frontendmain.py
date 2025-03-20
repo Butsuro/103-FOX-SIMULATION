@@ -11,7 +11,7 @@ FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Simulation Window")
 
-# Color Variables
+# Color Variables if needed
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GRAY = (200, 200, 200)
@@ -41,7 +41,7 @@ class Slider:
     # Draw the slider
     def draw(self, screen):
         pygame.draw.rect(screen, GRAY, self.rect, border_radius=5)
-        pygame.draw.circle(screen, RED, (self.knobPos, self.pos[1] + SLIDER_HEIGHT // 2), KNOB_RADIUS)
+        pygame.draw.circle(screen, (76, 196, 134), (self.knobPos, self.pos[1] + SLIDER_HEIGHT // 2), KNOB_RADIUS)
         numberText = SLIDER_NUMBER_FONT.render(str(self.value), True, BLACK)
         screen.blit(numberText, (self.pos[0] + SLIDER_WIDTH + 20, self.pos[1] - 5))
 
@@ -124,22 +124,26 @@ class Button:
             return self.rect.collidepoint(event.pos)
         return False
 
+# Images
+IMAGES = {}
+IMAGES['mainbackground'] = pygame.image.load('assets/mainbackground.png').convert_alpha()
+IMAGES['enc1'] = pygame.image.load('assets/enc1.png').convert_alpha()
 
 ## Page 1
 # Sliders
 sliders_1 = {}
-sliders_1[0] = Slider(100, [75, 100], "How many days have the canids been in the enclosure")
-sliders_1[1] = Slider(11, [75, 200], "How many social groups/families")
-sliders_1[2] = Slider(20, [75, 300], "How many canids in the enclosure")
+sliders_1[0] = Slider(100, [50, 100], "How many days have the canids been in the enclosure")
+sliders_1[1] = Slider(11, [50, 200], "How many social groups/families")
+sliders_1[2] = Slider(20, [50, 300], "How many canids in the enclosure")
 
 # Buttons
 buttons_1 = {}
-buttons_1[0] = Button([450, 180], [80,30], "Enclosure 1", RED, GRAY, WHITE)
-buttons_1[1] = Button([450 + 90, 180], [80,30], "Enclosure 2", RED, GRAY, WHITE)
-buttons_1[2] = Button([450 + 180, 180], [80,30], "Enclosure 3", RED, GRAY, WHITE)
-buttons_1[3] = Button([100, 440], [80,30], "Foxes", RED, GRAY, WHITE)
-buttons_1[4] = Button([210, 440], [80,30], "Coyotes", RED, GRAY, WHITE)
-buttons_1[5] = Button([600, 500], [100,50], "Next", RED, GRAY, WHITE)
+buttons_1[0] = Button([450, 180], [80,30], "Enclosure 1", (76, 196, 134), (154, 226, 187), (255, 249, 255))
+buttons_1[1] = Button([450 + 90, 180], [80,30], "Enclosure 2", (76, 196, 134), (154, 226, 187), (255, 249, 255))
+buttons_1[2] = Button([450 + 180, 180], [80,30], "Enclosure 3", (76, 196, 134), (154, 226, 187), (255, 249, 255))
+buttons_1[3] = Button([50, 440], [80,30], "Foxes", (76, 196, 134), (154, 226, 187), (255, 249, 255))
+buttons_1[4] = Button([160, 440], [80,30], "Coyotes", (76, 196, 134), (154, 226, 187), (255, 249, 255))
+buttons_1[5] = Button([600, 500], [100,50], "Next", (76, 196, 134), (154, 226, 187), (255, 249, 255))
 
 
 ################################### Useful Formulas/Functions ###################################
@@ -152,7 +156,7 @@ def createSecondPage(numFamilies, canidType): # Returns the sliders and buttons 
         slider_table[i] = slider
 
     button_table[0] = Button([50, 500], [100,50], "Back", RED, GRAY, WHITE)
-    button_table[1] = Button([550, 500], [200,50], "Start Simulation", RED, GRAY, WHITE)
+    button_table[1] = Button([550, 500], [200,50], "Start Simulation", (76, 196, 134), (154, 226, 187), (255, 249, 255))
 
     page_2[0] = slider_table
     page_2[1] = button_table
@@ -189,6 +193,7 @@ while running:
     
     # Override previous fills
     screen.fill(WHITE)
+    screen.blit(IMAGES["mainbackground"], (0, 0))
 
     # Update page to corresponding number
     if page == 1:
@@ -197,11 +202,14 @@ while running:
         enclosureText = SLIDER_TEXT_FONT.render("Select an Enclosure", True, BLACK)
         screen.blit(enclosureText, (500, 150))
         speciesText = SLIDER_TEXT_FONT.render("Select a Canid", True, BLACK)
-        screen.blit(speciesText, (140, 415))
+        screen.blit(speciesText, (95, 415))
         enclosureSelectionText = SUBTEXT_FONT.render(f"Chosen enclosure: {chosenEnclosure}", True, BLACK)
         screen.blit(enclosureSelectionText, (520, 220))
         speciesSelectionText = SUBTEXT_FONT.render(f"Chosen canid: {chosenCanid}", True, BLACK)
-        screen.blit(speciesSelectionText, (135, 480))
+        screen.blit(speciesSelectionText, (90, 480))
+
+        if chosenEnclosure == 1:
+            screen.blit(IMAGES["enc1"], (525, 230))
 
     if page == 2:
         sliders = secondPage[0]
