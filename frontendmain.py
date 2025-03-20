@@ -1,5 +1,6 @@
 import pygame
 import math
+import json
 pygame.init()
 
 
@@ -167,6 +168,7 @@ def sliderValueCalculator(mouse_x, slider_x, slider_width, slider_inc): # Used f
     return slider_val + 1
 
 ################################### Main Loop ###################################
+
 running = True
 page = 1
 chosenCanid = "Foxes"
@@ -230,13 +232,31 @@ while running:
                     secondPage = createSecondPage(families, chosenCanid)
                 if buttonType == "Back":
                     page -= 1
+
                 if buttonType == "Start Simulation":
+                    
                     # Run the simulation
                     for i in range(families):
                         canidsPerFamily.append(sliders[i].getValue())
-                    print(canidsPerFamily)
+
+                    # Load existing JSON data
+                    with open("data.json", "r") as file:
+                        data = json.load(file)
+
+                    # Modify variables
+                    data["families"] = families
+                    data["chosenCanid"] = chosenCanid
+                    data["days"] = days
+                    data["chosenEnclsure"] = chosenEnclosure
+                    data["canidsPerFamily"] = canidsPerFamily
+
+                    # Write back to the file
+                    with open("data.json", "w") as file:
+                        json.dump(data, file, indent=4)
+
                     running = False
                     import frontendsim
+
                 if buttonType == "Foxes":
                     chosenCanid = "Foxes"
                 if buttonType == "Coyotes":
