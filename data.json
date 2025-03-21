@@ -2,8 +2,8 @@
     "families": 1,
     "chosenCanid": "Foxes",
     "days": 1,
-    "chosenEnclosure": 1,
+    "chosenEnclosure": 3,
     "canidsPerFamily": [
-        1
+        4
     ]
 }
