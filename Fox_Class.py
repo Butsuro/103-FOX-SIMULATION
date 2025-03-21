@@ -137,6 +137,7 @@ class Fox:
             self.den_timer = den_timer - (1/1200)
             return [0, 0]
         if sleep_timer > 0:
+            self.sleep_need = 0
             self.sleep_timer = sleep_timer - (1/36000)
             return [0,0]
         if hunger >= 1 and exists(array[4], food_id):

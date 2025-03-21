@@ -41,7 +41,7 @@ def fox_spawn():
         for count in range(family):
             fox_count += 1
             foxAgentList.append(F_CLASS.Fox(fox_id= fox_count, family= family_count, pos= spawn_pos[fox_count-1], direction= [0, 0]))
-            Master_array[1][spawn_pos[fox_count-1][0]][spawn_pos[fox_count-1][1]] = fox_count
+            Master_array[1][spawn_pos[fox_count-1][1]][spawn_pos[fox_count-1][0]] = fox_count
 
 
 # Actual sim
@@ -56,3 +56,7 @@ while(counter < max_time):
     else:
         for fox in foxAgentList: 
             Master_array = fox.move(Master_array, foxAgentList)
+
+#trap locations picker
+            
+locations = []
