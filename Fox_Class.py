@@ -126,7 +126,7 @@ class Fox:
         if Denning >= 1:
             if self.DenQuantReached(array[3]):
                 self.Denning = 0
-            denLocations = find_den_locations(array, self.family)
+            denLocations = find_den_locations(array, radius= 2)
             closestDen = findClosest(self.pos, denLocations)
             if denLocations[closestDen[2]][0] == round(self.pos[0]) and denLocations[closestDen[2]][1] == round(self.pos[1]):
                 self.makeDen(array)
@@ -249,6 +249,7 @@ def find_items(enclosure, item_id):
                 item_locations.append(np.array((j, i)))
     return item_locations
 
+
 def exists(enclosure, item_id):# inputs thing and checks that thing
     for i, row in enumerate(enclosure):  # loop through rows (meters in height)
         for j, value in enumerate(row):  # loop through columns (meters in width)
@@ -262,9 +263,12 @@ def createFoxAgents(numFoxes, numFamilies, startingPositions):
         foxAgents.append(Fox(i+1, rd.randint(1,numFamilies), rd.uniform(1,5), rd.uniform(35,55), startingPositions[i][0], startingPositions[i][1], [0,0]))
         
 
-def find_den(Den3, num):
-    """Searches the enclosure (container) for a specific item (num) and returns their coordinates (1-based)."""
-    den_locations = find_items(Den3, num)
+def find_dens(enclosure):
+    den_locations = []
+    for i, row in enumerate(enclosure):  # loop through rows (meters in height)
+        for j, value in enumerate(row):  # loop through columns (meters in width)
+            if value != 0:  # Check if the item is present
+                den_locations.append(np.array((j, i)))
     return den_locations
     
 
@@ -279,8 +283,8 @@ def distance(coord1, coord2):
     dist = math.sqrt((coord2[0] - coord1[0]) ** 2 + (coord2[1] - coord1[1]) ** 2)
     return dist
 
-def find_den_locations(enclosure, den_id, radius=2):
-    found_den = find_den(enclosure[3], den_id)
+def find_den_locations(enclosure, radius=2):
+    found_den = find_dens(enclosure[3])
     found_trees = find_items(enclosure[0], 1)
     unique_coordinates = []
 
