@@ -1,6 +1,7 @@
 import Fox_Class
 import Masterarray as MA 
 import FoodSpawn as FS 
+import FoxTracking as FT
 
 import Fox_Class as F_CLASS
 
@@ -11,6 +12,7 @@ num_each_fam = [3, 7, 3]
 
 # these are things we can adjust
 Food_per_turn= 13
+num_traps = 6
 
 #Master array declaration
 height = 0
@@ -59,4 +61,7 @@ while(counter < max_time):
 
 #trap locations picker
             
-locations = []
+locations = FT.findLargest(Master_array[2], num_traps, width, height)
+
+for spot in locations:
+    Master_array[2][spot[1]][spot[0]] = 1

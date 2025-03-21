@@ -13,7 +13,8 @@ def sortArray(largestValues, trackingArr):
             break
             
 #largestValues in x,y coordinates of the pen            
-def findFiveLargest(trackingArr, largestValues, numLocations, arrSizeX, arrSizeY):
+def findLargest(trackingArr, numLocations, arrSizeX, arrSizeY):
+    largestValues = []
     for y in range(arrSizeY):
         for x in range(arrSizeX):
             if len(largestValues) < numLocations:
@@ -23,6 +24,7 @@ def findFiveLargest(trackingArr, largestValues, numLocations, arrSizeX, arrSizeY
                 if trackingArr[y][x] > trackingArr[largestValues[0][1]][largestValues[0][0]]:
                     largestValues[0][0] = x
                     largestValues[0][1] = y
+    return largestValues
 
 def highCanidTraffic(arr1, arr2, trafficArr, arrSizeX, arrSizeY):
     for y in range(arrSizeY):
@@ -30,13 +32,13 @@ def highCanidTraffic(arr1, arr2, trafficArr, arrSizeX, arrSizeY):
             if arr2[y][x] > 0 and arr2[y][x] != arr1[y][x]:
                 trafficArr[y][x] += 1   
 
-highCanidTraffic(array1, array2, trafArr, 3, 3)
-print(trafArr)
-#arr1 = 2D array, uniqueFoxArray = 3D array
-def uniqueCanidTraffic(arr1, uniqueFoxArray, arrSizeX, arrSizeY):
-    for y in range(arrSizeY):
-        for x in range(arrSizeX):
-            if arr1[y][x] > 0 and arr1[y][x] not in uniqueFoxArray[y][x][1:]:
-                uniqueFoxArray[y][x][0] += 1
-                uniqueFoxArray[y][x].append(arr1[y][x])
+# highCanidTraffic(array1, array2, trafArr, 3, 3)
+# print(trafArr)
+# #arr1 = 2D array, uniqueFoxArray = 3D array
+# def uniqueCanidTraffic(arr1, uniqueFoxArray, arrSizeX, arrSizeY):
+#     for y in range(arrSizeY):
+#         for x in range(arrSizeX):
+#             if arr1[y][x] > 0 and arr1[y][x] not in uniqueFoxArray[y][x][1:]:
+#                 uniqueFoxArray[y][x][0] += 1
+#                 uniqueFoxArray[y][x].append(arr1[y][x])
 
