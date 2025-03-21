@@ -199,7 +199,9 @@ class Fox:
                 return closestFriend[0]
       
             else:
-                return self.moveTo(array, random_id)
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]
     
 def weighted_random_choice(a, b, c, d, e):
    # Define options and their dynamic weights
