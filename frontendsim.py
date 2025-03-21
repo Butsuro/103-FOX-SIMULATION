@@ -37,10 +37,21 @@ numColourLegend = {
 }
 
 ################################### Simulation Variables ###################################
+# Get client data from json file
+with open("data.json", "r") as file:
+    data = json.load(file)
+
+CHOSEN_CONTAINER = data["chosenEnclosure"]
+if CHOSEN_CONTAINER == 1:
+    CHOSEN_CONTAINER = Container1
+elif CHOSEN_CONTAINER == 2:
+    CHOSEN_CONTAINER = Container2
+else:
+    CHOSEN_CONTAINER = Container3
+
 HEATMAP_SCALE = 30  # How visible the heatmap will be
 HEATMAP_COLOUR_SCALE = 0.4  # How quickly the heatmap will turn red
 HEATMAP_TRANSPARENCY_SCALE = 0.6  # How quickly the heatmap will be visible
-CHOSEN_CONTAINER = Container1
 
 # Simulation Display Variables
 X_OFFSET = 50  # Changes the x size of the environment
@@ -206,7 +217,7 @@ while running:
                     heatmapVisible = not heatmapVisible
 
                     # SAMPLE HEAT MAP
-                    rows, cols = 60, 36
+                    rows, cols = len(CHOSEN_CONTAINER), 36
                     random_base = np.random.randint(0, 21, (rows, cols))
                     smoothed_array = random_base.copy()
                     for i in range(rows):

@@ -16,6 +16,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GRAY = (200, 200, 200)
 BLACK = (0, 0, 0)
+GREEN = (76, 196, 134)
 
 SLIDER_WIDTH = 100
 SLIDER_HEIGHT = 10
@@ -41,7 +42,7 @@ class Slider:
     # Draw the slider
     def draw(self, screen):
         pygame.draw.rect(screen, GRAY, self.rect, border_radius=5)
-        pygame.draw.circle(screen, (76, 196, 134), (self.knobPos, self.pos[1] + SLIDER_HEIGHT // 2), KNOB_RADIUS)
+        pygame.draw.circle(screen, GREEN, (self.knobPos, self.pos[1] + SLIDER_HEIGHT // 2), KNOB_RADIUS)
         numberText = SLIDER_NUMBER_FONT.render(str(self.value), True, BLACK)
         screen.blit(numberText, (self.pos[0] + SLIDER_WIDTH + 20, self.pos[1] - 5))
 
@@ -128,22 +129,24 @@ class Button:
 IMAGES = {}
 IMAGES['mainbackground'] = pygame.image.load('assets/mainbackground.png').convert_alpha()
 IMAGES['enc1'] = pygame.image.load('assets/enc1.png').convert_alpha()
+IMAGES['enc2'] = pygame.image.load('assets/enc2.png').convert_alpha()
+IMAGES['enc3'] = pygame.image.load('assets/enc3.png').convert_alpha()
 
 ## Page 1
 # Sliders
 sliders_1 = {}
-sliders_1[0] = Slider(100, [50, 100], "How many days have the canids been in the enclosure")
-sliders_1[1] = Slider(11, [50, 200], "How many social groups/families")
-sliders_1[2] = Slider(20, [50, 300], "How many canids in the enclosure")
+sliders_1[0] = Slider(100, [60, 140], "How many days have the canids been in the enclosure")
+sliders_1[1] = Slider(11, [60, 240], "How many social groups/families")
+sliders_1[2] = Slider(20, [60, 340], "How many canids in the enclosure")
 
 # Buttons
 buttons_1 = {}
-buttons_1[0] = Button([450, 180], [80,30], "Enclosure 1", (76, 196, 134), (154, 226, 187), (255, 249, 255))
-buttons_1[1] = Button([450 + 90, 180], [80,30], "Enclosure 2", (76, 196, 134), (154, 226, 187), (255, 249, 255))
-buttons_1[2] = Button([450 + 180, 180], [80,30], "Enclosure 3", (76, 196, 134), (154, 226, 187), (255, 249, 255))
-buttons_1[3] = Button([50, 440], [80,30], "Foxes", (76, 196, 134), (154, 226, 187), (255, 249, 255))
-buttons_1[4] = Button([160, 440], [80,30], "Coyotes", (76, 196, 134), (154, 226, 187), (255, 249, 255))
-buttons_1[5] = Button([600, 500], [100,50], "Next", (76, 196, 134), (154, 226, 187), (255, 249, 255))
+buttons_1[0] = Button([450, 180], [80,30], "Enclosure 1", GREEN, (154, 226, 187), (255, 249, 255))
+buttons_1[1] = Button([450 + 90, 180], [80,30], "Enclosure 2", GREEN, (154, 226, 187), (255, 249, 255))
+buttons_1[2] = Button([450 + 180, 180], [80,30], "Enclosure 3", GREEN, (154, 226, 187), (255, 249, 255))
+buttons_1[3] = Button([50, 440], [80,30], "Foxes", GREEN, (154, 226, 187), (255, 249, 255))
+buttons_1[4] = Button([160, 440], [80,30], "Coyotes", GREEN, (154, 226, 187), (255, 249, 255))
+buttons_1[5] = Button([575, 490], [134,64], "Next", GREEN, (154, 226, 187), (255, 249, 255))
 
 
 ################################### Useful Formulas/Functions ###################################
@@ -152,11 +155,11 @@ def createSecondPage(numFamilies, canidType): # Returns the sliders and buttons 
     slider_table = {}
     button_table = {}
     for i in range(numFamilies):
-        slider = Slider(20, [50 + 250*math.floor(i/4), 100 + i%4*100], f"How many {canidType} in family {i + 1}")
+        slider = Slider(20, [60 + 250*math.floor(i/4), 170 + i%4*70], f"How many {canidType} in family {i + 1}")
         slider_table[i] = slider
 
-    button_table[0] = Button([50, 500], [100,50], "Back", RED, GRAY, WHITE)
-    button_table[1] = Button([550, 500], [200,50], "Start Simulation", (76, 196, 134), (154, 226, 187), (255, 249, 255))
+    button_table[0] = Button([60, 500], [100,50], "Back", RED, GRAY, WHITE)
+    button_table[1] = Button([575, 490], [134,64], "Start Simulation", GREEN, (154, 226, 187), (255, 249, 255))
 
     page_2[0] = slider_table
     page_2[1] = button_table
@@ -209,7 +212,11 @@ while running:
         screen.blit(speciesSelectionText, (90, 480))
 
         if chosenEnclosure == 1:
-            screen.blit(IMAGES["enc1"], (525, 230))
+            screen.blit(IMAGES["enc1"], (525, 240))
+        elif chosenEnclosure == 2:
+            screen.blit(IMAGES["enc2"], (525, 250))
+        elif chosenEnclosure == 3:
+            screen.blit(IMAGES["enc3"], (525, 265))
 
     if page == 2:
         sliders = secondPage[0]
@@ -255,7 +262,7 @@ while running:
                     data["families"] = families
                     data["chosenCanid"] = chosenCanid
                     data["days"] = days
-                    data["chosenEnclsure"] = chosenEnclosure
+                    data["chosenEnclosure"] = chosenEnclosure
                     data["canidsPerFamily"] = canidsPerFamily
 
                     # Write back to the file
