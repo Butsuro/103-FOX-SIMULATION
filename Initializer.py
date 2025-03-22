@@ -2,13 +2,16 @@ import Fox_Class
 import Masterarray as MA 
 import FoodSpawn as FS 
 import FoxTracking as FT
-
+import json
 import Fox_Class as F_CLASS
 
-#everything here is values which should be derrived from input
-enclosure_num = 1
-enclosure_time = 5
-num_each_fam = [3, 7, 3]
+#importing from data file
+with open("data.json", "r") as file:
+    user_input = json.load(file)
+
+enclosure_num = user_input["enclosure"]
+enclosure_time = user_input["days"]
+num_each_fam = user_input["foxes_per_family"]
 
 # these are things we can adjust
 Food_per_turn= 13
@@ -74,3 +77,12 @@ while(len(foxAgentList) > final_len):
         if fox.pos in locations:
             Master_array[1][fox.pos[1]][fox.pos[0]] = 0
             locations.remove(fox)
+
+
+results = {
+    "enclosure": enclosure_num,
+    "Array": Master_array
+}
+
+with open("data.json", "w") as file:
+    json.dump(results, file, indent = 4)
