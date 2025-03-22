@@ -65,3 +65,12 @@ locations = FT.findLargest(Master_array[2], num_traps, width, height)
 
 for spot in locations:
     Master_array[2][spot[1]][spot[0]] = 1
+
+counter = 0
+final_len = len(foxAgentList) - 8
+while(len(foxAgentList) > final_len):
+    for fox in foxAgentList:
+        Master_array = fox.move(Master_array, foxAgentList)
+        if fox.pos in locations:
+            Master_array[1][fox.pos[1]][fox.pos[0]] = 0
+            locations.remove(fox)
