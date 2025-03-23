@@ -43,13 +43,16 @@ class Fox:
     def closestCanidFriend(self, foxAgentList):
         foxPositionList = self.canidList(foxAgentList)
         lowestDist = None
-        counter = 0
         for fox in foxPositionList:
             if (lowestDist is None or lowestDist > np.linalg.norm(fox[0]-self.pos)) and self.family == fox[1]:
                 distVector = np.array(fox[0]-self.pos)
                 lowestDist = np.linalg.norm(distVector)
-                arrayPosition = counter
+                arrayPosition = fox[0]
                 distVector = unitVector(distVector)
+        if distVector is None or arrayPosition is None:
+        # Handle the case when no valid fox is found (you can return a default or raise an error)
+            return [None, None, None]
+            
         return [distVector, lowestDist, arrayPosition]
     
     def findDenRadius(self, enclosure):
@@ -76,6 +79,9 @@ class Fox:
     
     def boundaryCheck(self,array):
         if array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 4 or array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 0:
+            self.direction[0] = 0
+            self.direction[1] = 0
+        if array[1][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] != 0:
             self.direction[0] = 0
             self.direction[1] = 0
         else:

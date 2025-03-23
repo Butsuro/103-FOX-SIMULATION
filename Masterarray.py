@@ -23,3 +23,8 @@ Master3[0] = EM.container3
 #     for row in level:
 #         print(row)
 #     print() 
+
+def print_large_2d_array(array):
+    """Prints every row of a large 2D NumPy array, with elements separated by spaces."""
+    for row in array:
+        print(" ".join(map(str, row))) 

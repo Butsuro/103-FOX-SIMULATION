@@ -1,7 +1,7 @@
 {
     "families": 3,
     "chosenCanid": "Foxes",
-    "days": 20,
+    "days": 0.1,
     "chosenEnclosure": 1,
     "canidsPerFamily": [
         6,
