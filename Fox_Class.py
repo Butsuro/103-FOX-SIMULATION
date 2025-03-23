@@ -72,13 +72,10 @@ class Fox:
                 return False
            
     def makeDen(self, masterArray):
-        masterArray[3][self.pos[1]][self.pos[0]] = self.family
+        masterArray[3][round(self.pos[1])][round(self.pos[0])] = self.family
     
     def boundaryCheck(self,array):
-        if array[0][self.pos[0]+self.direction[0]][self.pos[1]+self.direction[1]] == 4 or array[0][self.pos[0]+self.direction[0]][self.pos[1]+self.direction[1]] == 0:
-            self.direction[0] = 0
-            self.direction[1] = 0
-        if array[1][self.pos[0]+self.direction[0]][self.pos[1]+self.direction[1]] != 4:
+        if array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 4 or array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 0:
             self.direction[0] = 0
             self.direction[1] = 0
         else:
@@ -87,22 +84,13 @@ class Fox:
     def move(self, masterArray, AgentList):
         self.direction = np.array(self.BrainFOX(masterArray, AgentList))
         self.boundaryCheck(masterArray)
-        self.pos = self.pos+self.direction
-        masterArray[1][round(self.pos[1])][round(self.pos[0])] = self.fox_id
-        masterArray[2][round(self.pos[1])][round(self.pos[0])] += 1
+        self.pos = np.round(self.pos+self.direction)
+        if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
+            raise ValueError(f"Invalid position detected: {self.pos}") 
+        
+        masterArray[1][round(self.pos[0])][round(self.pos[1])] = self.fox_id
+        masterArray[2][round(self.pos[0])][round(self.pos[1])] += 1
         return masterArray
-
-    def DenQuantReached(self, array):
-        count = 0
-        family_num = self.family
-        for row in array[0]:
-            for num in row:
-                if num == family_num:
-                    count += 1
-        if count >= 3:
-            return True
-        else:
-            return False
 
     
     def BrainFOX(self, array, foxAgentList):
@@ -124,7 +112,7 @@ class Fox:
             
 
         if Denning >= 1:
-            if self.DenQuantReached(array[3]):
+            if DenQuantReached(self.family, array[3]):
                 self.Denning = 0
             denLocations = find_den_locations(array, radius= 2)
             closestDen = findClosest(self.pos, denLocations)
@@ -222,11 +210,26 @@ def weighted_random_choice(a, b, c, d, e):
 
 
    return selected_option
+
+def DenQuantReached(family_num ,array):
+    count = 0
+    for row in array:
+        for num in row:
+            if num == family_num:
+                count += 1
+    if count >= 3:
+        return True
+    else:
+        return False
         
 def unitVector(vector):
-    if np.linalg.norm(vector) != 1 and np.linalg.norm(vector) != 0:
-        vector /= np.linalg.norm(vector)
-    return vector
+    vector = np.array(vector, dtype=np.float64)  # Ensure it's a NumPy array
+    magnitude = np.linalg.norm(vector)
+
+    if magnitude == 0:  # Prevent division by zero
+        return np.zeros_like(vector) 
+    
+    return vector / magnitude 
 
 def findClosest(canidPosition, positionList):
         lowestDist = None

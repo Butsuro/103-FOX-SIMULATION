@@ -18,6 +18,9 @@ def spawnitems(array_3d, num_items, layer, item_type):
         
         return array_3d
     
+
+##needs to be fixed ASAp
+    
 def generate_spawn_points(num_foxes, grid_height, grid_width, restriction_array):
     spawn_points = set()  # Store unique (y, x) spawn locations
 
@@ -30,3 +33,4 @@ def generate_spawn_points(num_foxes, grid_height, grid_width, restriction_array)
             spawn_points.add((y, x))
 
     return list(spawn_points)
+
