@@ -5,6 +5,7 @@ import FoxTracking as FT
 import json
 import Fox_Class as F_CLASS
 import numpy as np
+from tqdm import tqdm
 
 #importing from data file
 with open("data.json", "r") as file:
@@ -57,47 +58,61 @@ def fox_spawn():
 # Actual sim
 fox_spawn()
 
+print("foxes spawned")
 # MA.print_large_2d_array(Master_array[1])
 
 counter = 0
 max_time =  enclosure_time * 86400
-while(counter < max_time):
-    counter += 1
-    if counter % 86400 == 0:
-        Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
-    else:
-        for fox in foxAgentList: 
-            Master_array = fox.move(Master_array, foxAgentList)
+print("starting simulation")
+with tqdm(total=max_time, desc="Simulating Enclosure Time",  unit="cycles", dynamic_ncols=True, position=0, leave=True) as pbar:
+    while(counter < max_time):
+        counter += 1
+        pbar.update(1)
+        if counter % 86400 == 0:
+            Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
+        else:
+            for fox in foxAgentList: 
+                Master_array = fox.move(Master_array, foxAgentList)
 
 print("main sim complete")
 
-MA.print_large_2d_array(Master_array[3])
+# MA.print_large_2d_array(Master_array[3])
 
 #trap locations picker
-            
+
+print("picking traps")      
 locations = FT.findLargest(Master_array[2], num_traps, width, height)
 
 for spot in locations:
-    Master_array[2][spot[1]][spot[0]] = 1
-
+    Master_array[5][spot[1]][spot[0]] = 1
+print("traps placed")
 counter = 0
 final_len = len(foxAgentList) - num_traps
-while(len(foxAgentList) > final_len):
-    for fox in foxAgentList:
-        Master_array = fox.move(Master_array, foxAgentList)
-        if (np.array_equal(fox.pos, loc) for loc in locations):
-            Master_array[1][round(fox.pos[0])][round(fox.pos[1])] = 0
-            foxAgentList.remove(fox)
-        else:
+print("starting capture sim")
+with tqdm(total=final_len, desc="Simulating Capture Time",  unit="Foxes caught", ncols= 200, position=0, leave=True) as pbar:
+    while(len(foxAgentList) > final_len):
+        for fox in foxAgentList:
+            counter += 1
             Master_array = fox.move(Master_array, foxAgentList)
+            if (np.array_equal(fox.pos, loc) for loc in locations):
+                Master_array[1][round(fox.pos[0])][round(fox.pos[1])] = 0
+                foxAgentList.remove(fox)
+                pbar.update(1)
+            else:
+                Master_array = fox.move(Master_array, foxAgentList)
+print("capture sim complete")
+print("total time taken is:") 
+print(counter/86400)
 
 
-
+print("sending results")
 results = {
     "chosenEnclosure": enclosure_num,
-    "Array": Master_array,
-    "Trap_locations": locations 
+    "heatmap": Master_array[2].tolist(),
+    "Trap_locations": locations
 }
 
-with open("data.json", "w") as file:
+with open("simoutput.json", "w") as file:
     json.dump(results, file, indent = 4)
+
+print("results sent")

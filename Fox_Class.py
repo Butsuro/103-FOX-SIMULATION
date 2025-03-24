@@ -43,8 +43,10 @@ class Fox:
     def closestCanidFriend(self, foxAgentList):
         foxPositionList = self.canidList(foxAgentList)
         lowestDist = None
+        distVector = None
+        arrayPosition = None
         for fox in foxPositionList:
-            if (lowestDist is None or lowestDist > np.linalg.norm(fox[0]-self.pos)) and self.family == fox[1]:
+            if (lowestDist is None or lowestDist >= np.linalg.norm(fox[0]-self.pos)) and self.family == fox[1]:
                 distVector = np.array(fox[0]-self.pos)
                 lowestDist = np.linalg.norm(distVector)
                 arrayPosition = fox[0]
@@ -78,6 +80,7 @@ class Fox:
         masterArray[3][round(self.pos[1])][round(self.pos[0])] = self.family
     
     def boundaryCheck(self,array):
+        array = np.array(array)
         if array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 4 or array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 0:
             self.direction[0] = 0
             self.direction[1] = 0
@@ -158,6 +161,9 @@ class Fox:
                 return self.moveTo(array[3], denplus_id)
         if GoToFreind >= 1:
             closestFriend = self.closestCanidFriend(foxAgentList)
+            if closestFriend[1] == None:
+                self.GoToFreind = 0.3
+                return [0,0]
             if closestFriend[1] <= 1.3:
                 self.FamilyTime = 1
                 self.GoToFreind = 0.3
@@ -299,7 +305,7 @@ def find_den_locations(enclosure, radius=2):
 
     
     if not found_den:
-        print("No dens found to compare.")
+        # print("No dens found to compare.")
         return found_trees  # If there are no dens, all tree coordinates are unique
 
     for coord in found_trees:
