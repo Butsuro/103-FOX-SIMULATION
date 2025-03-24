@@ -57,7 +57,7 @@ def fox_spawn():
 # Actual sim
 fox_spawn()
 
-MA.print_large_2d_array(Master_array[1])
+# MA.print_large_2d_array(Master_array[1])
 
 counter = 0
 max_time =  enclosure_time * 86400
@@ -70,6 +70,9 @@ while(counter < max_time):
             Master_array = fox.move(Master_array, foxAgentList)
 
 print("main sim complete")
+
+MA.print_large_2d_array(Master_array[3])
+
 #trap locations picker
             
 locations = FT.findLargest(Master_array[2], num_traps, width, height)
@@ -83,7 +86,7 @@ while(len(foxAgentList) > final_len):
     for fox in foxAgentList:
         Master_array = fox.move(Master_array, foxAgentList)
         if (np.array_equal(fox.pos, loc) for loc in locations):
-            Master_array[1][round(fox.pos[1])][round(fox.pos[0])] = 0
+            Master_array[1][round(fox.pos[0])][round(fox.pos[1])] = 0
             foxAgentList.remove(fox)
         else:
             Master_array = fox.move(Master_array, foxAgentList)
