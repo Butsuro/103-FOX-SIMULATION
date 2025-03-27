@@ -6,7 +6,7 @@ food_id = 6
 random_id = 13
 
 class Fox:
-    def __init__(self, fox_id, family,pos, direction):
+    def __init__(self, fox_id, family,pos, direction, family_size):
         self.fox_id = fox_id
         self.family = family
         self.hunger = 0
@@ -18,6 +18,7 @@ class Fox:
         self.FamilyTime = 0
         self.randomness = 0.1
         self.den_timer = 0
+        self.family_size = family_size
         self.pos = np.array(pos)
         self.direction = unitVector(np.array(direction))
     
@@ -122,6 +123,7 @@ class Fox:
 
         self.direction = np.array(brain_output)
         self.boundaryCheck(masterArray)
+        print(f"FOX {self.fox_id} - Brain output: {self.direction}")
         self.pos = np.round(self.pos+self.direction)
         if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
             raise ValueError(f"Invalid position detected: {self.pos}") 
@@ -188,7 +190,7 @@ class Fox:
             else:
                 self.GOtoDEN = 1
                 return self.moveTo(array[3], denplus_id)
-        if GoToFreind >= 1:
+        if GoToFreind >= 1 and self.family_size > 1:
             closestFriend = self.closestCanidFriend(foxAgentList)
             if closestFriend[1] == None:
                 self.GoToFreind = 0.3
@@ -222,7 +224,7 @@ class Fox:
                 self.GOtoDEN = 1
                 return self.moveTo(array[3], denplus_id)
        
-            if option == "Go to Friend":
+            if option == "Go to Friend" and self.family_size > 1:
                 self.GoToFreind = 1
                 closestFriend = self.closestCanidFriend(foxAgentList)
                 return closestFriend[0]
