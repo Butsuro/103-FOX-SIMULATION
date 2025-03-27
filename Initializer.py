@@ -64,11 +64,11 @@ print("foxes spawned")
 counter = 0
 max_time =  enclosure_time * 86400
 print("starting simulation")
-with tqdm(total=max_time, desc="Simulating Enclosure Time",  unit="cycles", dynamic_ncols=True, position=0, leave=True) as pbar:
+with tqdm(total=max_time, desc="Simulating Enclosure Time", unit="cycles", dynamic_ncols=True) as pbar:
     while(counter < max_time):
         counter += 1
         pbar.update(1)
-        if counter % 86400 == 0:
+        if counter-1 % 86400 == 0:
             Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
         else:
             for fox in foxAgentList: 
@@ -82,6 +82,14 @@ print("main sim complete")
 
 print("picking traps")      
 locations = FT.findLargest(Master_array[2], num_traps, width, height)
+
+results = {
+    "chosenEnclosure": enclosure_num,
+    "heatmap": Master_array[2].tolist(),
+    "Trap_locations": locations
+}
+with open("simoutput.json", "w") as file:
+    json.dump(results, file, indent = 4)
 
 for spot in locations:
     Master_array[5][spot[1]][spot[0]] = 1
@@ -98,6 +106,8 @@ with tqdm(total=final_len, desc="Simulating Capture Time",  unit="Foxes caught",
                 Master_array[1][round(fox.pos[0])][round(fox.pos[1])] = 0
                 foxAgentList.remove(fox)
                 pbar.update(1)
+            if counter-1 % 86400 == 0:
+                Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
             else:
                 Master_array = fox.move(Master_array, foxAgentList)
 print("capture sim complete")

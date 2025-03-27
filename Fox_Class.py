@@ -79,19 +79,48 @@ class Fox:
     def makeDen(self, masterArray):
         masterArray[3][round(self.pos[1])][round(self.pos[0])] = self.family
     
-    def boundaryCheck(self,array):
-        array = np.array(array)
-        if array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 4 or array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 0:
-            self.direction[0] = 0
-            self.direction[1] = 0
-        if array[1][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] != 0:
-            self.direction[0] = 0
-            self.direction[1] = 0
-        else:
-            self.direction = unitVector(self.direction)
+    # def boundaryCheck(self,array):
+    #     array = np.array(array)
+    #     if array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 4 or array[0][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] == 0:
+    #         self.direction[0] = 0
+    #         self.direction[1] = 0
+    #     if array[1][round(self.pos[0]+self.direction[0])][round(self.pos[1]+self.direction[1])] != 0:
+    #         self.direction[0] = 0
+    #         self.direction[1] = 0
+    #     else:
+    #         self.direction = unitVector(self.direction)
+    
+    def boundaryCheck(self, array):
+        # Predict next position
+        next_x = round(self.pos[0] + self.direction[0])
+        next_y = round(self.pos[1] + self.direction[1])
+
+        max_y, max_x = array[0].shape  # assume array[0] is a 2D map
+        
+        # Stay in bounds
+        if not (0 <= next_x < max_x and 0 <= next_y < max_y):
+            self.direction = np.array([0, 0])
+            return 
+
+        # Tree or water = stop movement
+        if array[0][next_y][next_x] == 4 or array[0][next_y][next_x] == 0:
+            self.direction = np.array([0, 0])
+            return
+        
+        # Another fox = stop movement
+        if array[1][next_y][next_x] != 0:
+            self.direction = np.array([0, 0])
+            return
+
+        # Otherwise normalize
+        self.direction = unitVector(self.direction)
+
             
     def move(self, masterArray, AgentList):
-        self.direction = np.array(self.BrainFOX(masterArray, AgentList))
+        brain_output = self.BrainFOX(masterArray, AgentList)
+        # print(f"FOX {self.fox_id} - Brain output: {brain_output}")
+
+        self.direction = np.array(brain_output)
         self.boundaryCheck(masterArray)
         self.pos = np.round(self.pos+self.direction)
         if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
@@ -116,7 +145,7 @@ class Fox:
 
         self.hunger += 1/86400
         self.GOtoDEN += 1/25200
-        self.FamilyTime += 1/10000
+        self.GoToFreind += 1/10000
         self.sleep_need += 1/50400
             
 
@@ -131,7 +160,7 @@ class Fox:
             else:
                 return closestDen[0]
         if den_timer >= 1:
-            self.den_timer = den_timer - (1/1200)
+            self.den_timer = den_timer - (1/900)
             return [0, 0]
         if sleep_timer > 0:
             self.sleep_need = 0
