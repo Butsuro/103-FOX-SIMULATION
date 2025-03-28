@@ -1,6 +1,6 @@
 {
     "chosenCanid": "Foxes",
-    "days": 0.1,
+    "days": 0.01,
     "chosenEnclosure": 1,
     "canidsPerFamily": [
         2,
