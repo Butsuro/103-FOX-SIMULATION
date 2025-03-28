@@ -24,7 +24,6 @@ KNOB_RADIUS = 10
 SLIDER_TEXT_FONT = pygame.font.Font(None, 22)
 SLIDER_NUMBER_FONT = pygame.font.Font(None, 25)
 SUBTEXT_FONT = pygame.font.Font(None, 15)
-
 BUTTON_FONT = pygame.font.Font(None, 20)
 
 # Classes
@@ -137,7 +136,6 @@ IMAGES['enc3'] = pygame.image.load('assets/enc3.png').convert_alpha()
 sliders_1 = {}
 sliders_1[0] = Slider(100, [60, 140], "How many days have the canids been in the enclosure")
 sliders_1[1] = Slider(11, [60, 240], "How many social groups/families")
-sliders_1[2] = Slider(20, [60, 340], "How many canids in the enclosure")
 
 # Buttons
 buttons_1 = {}
@@ -180,7 +178,6 @@ running = True
 page = 1
 chosenCanid = "Foxes"
 families = 1
-canids = 1
 days = 1
 chosenEnclosure = 1
 canidsPerFamily = []
@@ -242,7 +239,6 @@ while running:
                 if buttonType == "Next":
                     days = sliders[0].getValue()
                     families = sliders[1].getValue()
-                    canids = sliders[2].getValue()
                     page = 2
                     secondPage = createSecondPage(families, chosenCanid)
                 if buttonType == "Back":

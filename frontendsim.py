@@ -182,7 +182,7 @@ def drawHeatmap(arr):
                 pixel.fill((255,max(255 - arr[y][x]*HEATMAP_SCALE*HEATMAP_COLOUR_SCALE, 0),0))
                 screen.blit(pixel, (pixelArr[y][x][0], pixelArr[y][x][1]))
 
-# Draws the traps
+# Draws the traps. Requires the environment map and the trap location array
 def drawTraps(arr, trapArray):
     xLength, yLength, pixelArr = turnArrayToPixels(arr, 0)
     for i in range(len(trapArray)):
