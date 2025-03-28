@@ -83,25 +83,25 @@ class Fox:
     #(np.array_equal(new_pos, fox.pos) and self.fox_id != fox.fox_id for fox in AgentList) 
     def move(self, masterArray, AgentList):
         brain_output = self.BrainFOX(masterArray, AgentList)
-        print(f"FOX {self.fox_id} - Brain output: {brain_output}")
+        # print(f"FOX {self.fox_id} - Brain output: {brain_output}")
         # print(f"FOX {self.fox_id} - original position: {self.pos}")
         self.direction = np.array(brain_output)
         # print(f"FOX {self.fox_id} - Direction: {self.direction}")
         new_pos = np.round(self.pos+self.direction)
-        print(f"FOX {self.fox_id} - Ideal position: {new_pos}")
+        # print(f"FOX {self.fox_id} - Ideal position: {new_pos}")
         
         if masterArray[0][round(new_pos[0])][round(new_pos[1])] == 4 or masterArray[0][round(new_pos[0])][round(new_pos[1])]  == 0:
-            print("stepping outside")
+            # print("stepping outside")
             new_pos = self.pos
         if masterArray[1][round(new_pos[0])][round(new_pos[1])] != 0:
-            print(f"stepping on another fox {masterArray[1][round(new_pos[0])][round(new_pos[1])]}")
-            MA.print_large_2d_array(masterArray[1])
+            # print(f"stepping on another fox {masterArray[1][round(new_pos[0])][round(new_pos[1])]}")
+            # MA.print_large_2d_array(masterArray[1])
             new_pos = self.pos
 
         masterArray[1][round(self.pos[0])][round(self.pos[1])] = 0
-        print(f"FOX {self.fox_id} - Position before: {self.pos}")
+        # print(f"FOX {self.fox_id} - Position before: {self.pos}")
         self.pos = new_pos
-        print(f"FOX {self.fox_id} - Position after: {self.pos}")
+        # print(f"FOX {self.fox_id} - Position after: {self.pos}")
         if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
             raise ValueError(f"Invalid position detected: {self.pos}") 
         
@@ -168,19 +168,20 @@ class Fox:
                 self.GOtoDEN = 1
                 return self.moveTo(array[3], denplus_id)
         if GoToFreind >= 1 and self.family_size > 1:
-            print("Freind Triggered")
+            # print("Freind Triggered")
             closestFriend = self.closestCanidFriend(foxAgentList)
             if closestFriend[1] == None:
                 self.GoToFreind = 0.0
                 return [0,0]
-            if closestFriend[1] <= 1.3:
+            if closestFriend[1] <= 1.5:
                 print("closest freind in radius")
                 self.FamilyTime = 1 
-                self.GoToFreind = 0.3
+                self.GoToFreind = 0.0
                 return [0,0] #changed from return self.moveTo(array, family_id)
             else:
                 return closestFriend[0]
         if FamilyTime > 0:
+            self.GoToFreind = 0.0
             self.FamilyTime = FamilyTime - (1/7200)
             closestFriend = self.closestCanidFriend(foxAgentList)
             return closestFriend[0]
