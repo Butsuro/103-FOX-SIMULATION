@@ -91,40 +91,48 @@ class Fox:
     #     else:
     #         self.direction = unitVector(self.direction)
     
-    def boundaryCheck(self, array):
-        # Predict next position
-        next_x = round(self.pos[0] + self.direction[0])
-        next_y = round(self.pos[1] + self.direction[1])
+    # def boundaryCheck(self, array):
+    #     # Predict next position
+    #     next_x = round(self.pos[1] + self.direction[1])
+    #     next_y = round(self.pos[0] + self.direction[0])
 
-        max_y, max_x = array[0].shape  # assume array[0] is a 2D map
+    #     max_y, max_x = array[0].shape  # assume array[0] is a 2D map
         
-        # Stay in bounds
-        if not (0 <= next_x < max_x and 0 <= next_y < max_y):
-            self.direction = np.array([0, 0])
-            return 
+    #     # Stay in bounds
+    #     if not (0 <= next_x < max_x and 0 <= next_y < max_y):
+    #         self.direction = np.array([0, 0])
+    #         return 
 
-        # Tree or water = stop movement
-        if array[0][next_y][next_x] == 4 or array[0][next_y][next_x] == 0:
-            self.direction = np.array([0, 0])
-            return
+    #     # Tree or water = stop movement
+    #     if array[0][next_y][next_x] == 4 or array[0][next_y][next_x] == 0:
+    #         self.direction = np.array([0, 0])
+    #         return
         
-        # Another fox = stop movement
-        if array[1][next_y][next_x] != 0:
-            self.direction = np.array([0, 0])
-            return
-
-        # Otherwise normalize
-        self.direction = unitVector(self.direction)
+    #     # Another fox = stop movement
+    #     if array[1][next_y][next_x] != 0:
+    #         self.direction = np.array([0, 0])
+    #         return
 
             
     def move(self, masterArray, AgentList):
         brain_output = self.BrainFOX(masterArray, AgentList)
         # print(f"FOX {self.fox_id} - Brain output: {brain_output}")
-
+        # print(f"FOX {self.fox_id} - original position: {self.pos}")
         self.direction = np.array(brain_output)
-        self.boundaryCheck(masterArray)
-        print(f"FOX {self.fox_id} - Brain output: {self.direction}")
-        self.pos = np.round(self.pos+self.direction)
+        # print(f"FOX {self.fox_id} - Direction: {self.direction}")
+        new_pos = np.round(self.pos+self.direction)
+        
+        
+        if masterArray[0][round(new_pos[0])][round(new_pos[1])] == 4 or masterArray[0][round(new_pos[0])][round(new_pos[1])]  == 0:
+            # print("stepping outside")
+            new_pos = self.pos
+        # if masterArray[1][round(new_pos[0])][round(new_pos[1])] != 0:
+        #     # print("stepping on another fox")
+        #     new_pos = self.pos
+
+        # print(f"FOX {self.fox_id} - Position before: {self.pos}")
+        self.pos = new_pos
+        # print(f"FOX {self.fox_id} - Position after: {self.pos}")
         if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
             raise ValueError(f"Invalid position detected: {self.pos}") 
         
@@ -190,17 +198,17 @@ class Fox:
             else:
                 self.GOtoDEN = 1
                 return self.moveTo(array[3], denplus_id)
-        if GoToFreind >= 1 and self.family_size > 1:
-            closestFriend = self.closestCanidFriend(foxAgentList)
-            if closestFriend[1] == None:
-                self.GoToFreind = 0.3
-                return [0,0]
-            if closestFriend[1] <= 1.3:
-                self.FamilyTime = 1
-                self.GoToFreind = 0.3
-                return [0,0] #changed from return self.moveTo(array, family_id)
-            else:
-                return closestFriend[0]
+        # if GoToFreind >= 1 and self.family_size > 1:
+        #     closestFriend = self.closestCanidFriend(foxAgentList)
+        #     if closestFriend[1] == None:
+        #         self.GoToFreind = 0.3
+        #         return [0,0]
+        #     if closestFriend[1] <= 1.3:
+        #         self.FamilyTime = 1
+        #         self.GoToFreind = 0.3
+        #         return [0,0] #changed from return self.moveTo(array, family_id)
+        #     else:
+        #         return closestFriend[0]
         if FamilyTime > 0:
             self.FamilyTime = FamilyTime - (1/7200)
             closestFriend = self.closestCanidFriend(foxAgentList)
