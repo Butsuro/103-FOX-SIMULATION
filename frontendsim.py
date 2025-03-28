@@ -3,6 +3,11 @@ import math
 import Masterarray as master
 import numpy as np
 import json
+import subprocess
+import time
+import threading
+
+import Initializer
 
 pygame.init()
 
@@ -185,6 +190,11 @@ trapsVisible = False
 gridVisible = True
 
 print(WIDTH, HEIGHT)
+#subprocess.Popen(["python", "Initializer.py"])
+
+# Get simulation data from json file
+with open("simoutput.json", "r") as file:
+    simData = json.load(file)
 
 while running:
     pygame.time.delay(RENDER_TIME)
@@ -195,7 +205,7 @@ while running:
     screen.blit(IMAGES["background"], (0, 0))
     drawEnvironment(CHOSEN_CONTAINER, gridVisible)
     if heatmapVisible:
-        drawHeatmap(smoothed_array)
+        drawHeatmap(simData["heatmap"])
     
     # Draw buttons
     for button in buttons.values():
@@ -216,7 +226,9 @@ while running:
                 if buttonType == "Display Heatmap":
                     heatmapVisible = not heatmapVisible
 
-                    # SAMPLE HEAT MAP
+                    """
+                    SAMPLE HEAT MAP
+
                     rows, cols = len(CHOSEN_CONTAINER), 36
                     random_base = np.random.randint(0, 21, (rows, cols))
                     smoothed_array = random_base.copy()
@@ -230,10 +242,11 @@ while running:
                                         neighbors.append(random_base[ni, nj])
                             smoothed_array[i, j] = np.mean(neighbors)
                     smoothed_array = np.clip(smoothed_array, 0, 20).astype(int)
+                    """
 
                 if buttonType == "Display Traps":
                     trapsVisible = not trapsVisible
-
+                    
     pygame.display.update()
 
 # Quit pygame
