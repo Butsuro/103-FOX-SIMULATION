@@ -7,7 +7,7 @@ import subprocess
 import time
 import threading
 
-import Initializer
+#import Initializer
 
 pygame.init()
 
@@ -182,6 +182,17 @@ def drawHeatmap(arr):
                 pixel.fill((255,max(255 - arr[y][x]*HEATMAP_SCALE*HEATMAP_COLOUR_SCALE, 0),0))
                 screen.blit(pixel, (pixelArr[y][x][0], pixelArr[y][x][1]))
 
+# Draws the traps
+def drawTraps(arr, trapArray):
+    xLength, yLength, pixelArr = turnArrayToPixels(arr, 0)
+    for i in range(len(trapArray)):
+            x = trapArray[i][0]
+            y = trapArray[i][1]
+            pixel = pygame.Surface((pixelArr[y][x][2], pixelArr[y][x][3]))
+            pixel.fill((0,0,0))
+            screen.blit(pixel, (pixelArr[y][x][0], pixelArr[y][x][1]))
+
+
 
 ################################### Simulation Loop ########################################
 running = True
@@ -206,6 +217,8 @@ while running:
     drawEnvironment(CHOSEN_CONTAINER, gridVisible)
     if heatmapVisible:
         drawHeatmap(simData["heatmap"])
+    if trapsVisible:
+        drawTraps(CHOSEN_CONTAINER, simData["Trap_locations"])
     
     # Draw buttons
     for button in buttons.values():
