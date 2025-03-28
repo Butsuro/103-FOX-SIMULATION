@@ -288,3 +288,33 @@ while running:
 
 # Quit Pygame
 pygame.quit()
+
+# Reset client data
+old_client_data = {
+    "chosenCanid": "Foxes",
+    "days": 1,
+    "chosenEnclosure": 1,
+    "canidsPerFamily": [
+        1
+    ],
+    "families": 1
+}
+
+# Write back to the file
+with open("data.json", "w") as file:
+    json.dump(old_client_data, file, indent=4)
+
+"""
+# Reset simulation data
+old_simulation_data = {
+    "chosenEnclosure": 1,
+    "heatmap": [[]],
+    "Trap_locations": [[]]
+}
+
+# Write back to the file
+with open("simoutput.json", "w") as file:
+    json.dump(old_simulation_data, file, indent=4)
+"""
+
+print("ended")
