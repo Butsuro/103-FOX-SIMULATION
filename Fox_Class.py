@@ -25,8 +25,8 @@ class Fox:
     def canidList(self, foxAgentList):
         foxPositionList = []
         for fox in foxAgentList:
-            if fox.fox_id == self.fox_id: continue
-            foxPositionList.append([fox.pos, fox.family])
+            if fox.fox_id != self.fox_id: 
+                foxPositionList.append([fox.pos, fox.family])
         return foxPositionList
     
     def closestCanid(self, foxAgentList):
@@ -123,7 +123,7 @@ class Fox:
         denplus_id = self.family
 
         self.hunger += 1/86400
-        self.GOtoDEN += 1/25200
+        self.GOtoDEN += 1/43200
         self.GoToFreind += 1/20000
         self.sleep_need += 1/50400
             
@@ -143,6 +143,7 @@ class Fox:
             return [0, 0]
         if sleep_timer > 0:
             self.sleep_need = 0
+            self.GOtoDEN = 0
             self.sleep_timer = sleep_timer - (1/36000)
             return [0,0]
         if hunger >= 1 and exists(array[4], food_id):
@@ -171,10 +172,11 @@ class Fox:
             # print("Freind Triggered")
             closestFriend = self.closestCanidFriend(foxAgentList)
             if closestFriend[1] == None:
-                self.GoToFreind = 0.0
-                return [0,0]
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]
             if closestFriend[1] <= 1.5:
-                print("closest freind in radius")
+                # print("closest freind in radius")
                 self.FamilyTime = 1 
                 self.GoToFreind = 0.0
                 return [0,0] #changed from return self.moveTo(array, family_id)
@@ -182,7 +184,7 @@ class Fox:
                 return closestFriend[0]
         if FamilyTime > 0:
             self.GoToFreind = 0.0
-            self.FamilyTime = FamilyTime - (1/7200)
+            self.FamilyTime = FamilyTime - (1/10)
             closestFriend = self.closestCanidFriend(foxAgentList)
             return closestFriend[0]
         
@@ -192,13 +194,17 @@ class Fox:
 
             if option == "Hunger":
                 self.hunger = 1
-                return [0, 0]
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]
 
 
             if option == "Sleep Need":
                 self.sleep_need = 0
                 self.sleep_timer = 1
-                return [0, 0]
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]
       
             if option == "Go to Den":
                 self.GOtoDEN = 1
@@ -334,17 +340,187 @@ def find_den_locations(enclosure, radius=2):
 
     return unique_coordinates
             
-#magn = np.linalg.norm(arr)
-#print(rd.uniform(1,5))
-#print(math.cos(math.radians(90)))
-#for foxAgent in fox:
-    #print(foxAgent)
-#for fox in foxAgents:
-    #print(fox.fox_id, " ", fox.pos, " ", fox.direction)
-    #fox.move(foxAgents)
-    #print(fox.fox_id, " ", fox.pos)
-# while(True):
-#     print(foxAgents[0].pos, " ", foxAgents[0].direction)
-#     for fox in foxAgents:
-#         fox.move(foxAgents)
-#     sleep(1)
+class Cayote:
+    def __init__(self, fox_id, family,pos, direction, family_size):
+        self.fox_id = fox_id
+        self.family = family
+        self.hunger = 0
+        self.sleep_need = 0
+        self.sleep_timer = 0
+        self.Denning = 1
+        self.GOtoDEN = 0
+        self.GoToFreind = 0.3
+        self.FamilyTime = 0
+        self.randomness = 0.1
+        self.den_timer = 0
+        self.family_size = family_size
+        self.pos = np.array(pos)
+        self.direction = unitVector(np.array(direction))
+    
+    def canidList(self, foxAgentList):
+        foxPositionList = []
+        for fox in foxAgentList:
+            if fox.fox_id != self.fox_id: 
+                foxPositionList.append([fox.pos, fox.family])
+        return foxPositionList
+    
+    def closestCanid(self, foxAgentList):
+        foxPositionList = self.canidList(foxAgentList)
+        closest = findClosest(self.pos, foxPositionList[0])
+        dirVector = unitVector(closest[0])
+        distance = closest[1]
+        arrayPosition = closest[2]
+        if distance < 10:
+            if foxPositionList[arrayPosition][1] == self.family:
+                dirVector *= rd.uniform(1,2)
+                self.direction = unitVector(self.direction+dirVector)
+            else: self.direction = unitVector(self.direction-dirVector)
+
+    def closestCanidFriend(self, foxAgentList):
+        foxPositionList = self.canidList(foxAgentList)
+        lowestDist = None
+        distVector = None
+        arrayPosition = None
+        for fox in foxPositionList:
+            if (lowestDist is None or lowestDist >= np.linalg.norm(fox[0]-self.pos)) and self.family == fox[1]:
+                distVector = np.array(fox[0]-self.pos)
+                lowestDist = np.linalg.norm(distVector)
+                arrayPosition = fox[0]
+                distVector = unitVector(distVector)
+        if distVector is None or arrayPosition is None:
+        # Handle the case when no valid fox is found (you can return a default or raise an error)
+            return [None, None, None]
+            
+        return [distVector, lowestDist, arrayPosition]
+    
+    def findDenRadius(self, enclosure):
+        familyDens = find_items(enclosure[3], self.family)
+        closestDen = findClosest(self.pos, familyDens)
+        return closestDen
+    
+    def moveTo(self, enclosure, item_id): #inputs a thing and a fox, returns the direction vector to a fox
+        itemList = find_items(enclosure, item_id)
+        closest = findClosest(self.pos, itemList)
+        dirVector = unitVector(closest[0])
+        return dirVector
+        
+    def atAThing(self, enclosure, item_id):
+        # thing and fox are same position
+        
+            if enclosure[round(self.pos[1])][round(self.pos[0])] == item_id:
+                return True
+            else:
+                return False
+           
+    def makeDen(self, masterArray):
+        masterArray[3][round(self.pos[1])][round(self.pos[0])] = self.family
+    
+    #(np.array_equal(new_pos, fox.pos) and self.fox_id != fox.fox_id for fox in AgentList) 
+    def move(self, masterArray, AgentList):
+        brain_output = self.BrainCayote(masterArray, AgentList)
+        # print(f"FOX {self.fox_id} - Brain output: {brain_output}")
+        # print(f"FOX {self.fox_id} - original position: {self.pos}")
+        self.direction = np.array(brain_output)
+        # print(f"FOX {self.fox_id} - Direction: {self.direction}")
+        new_pos = np.round(self.pos+self.direction)
+        # print(f"FOX {self.fox_id} - Ideal position: {new_pos}")
+        
+        if masterArray[0][round(new_pos[0])][round(new_pos[1])] == 4 or masterArray[0][round(new_pos[0])][round(new_pos[1])]  == 0:
+            # print("stepping outside")
+            new_pos = self.pos
+        if masterArray[1][round(new_pos[0])][round(new_pos[1])] != 0:
+            # print(f"stepping on another fox {masterArray[1][round(new_pos[0])][round(new_pos[1])]}")
+            # MA.print_large_2d_array(masterArray[1])
+            new_pos = self.pos
+
+        masterArray[1][round(self.pos[0])][round(self.pos[1])] = 0
+        # print(f"FOX {self.fox_id} - Position before: {self.pos}")
+        self.pos = new_pos
+        # print(f"FOX {self.fox_id} - Position after: {self.pos}")
+        if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
+            raise ValueError(f"Invalid position detected: {self.pos}") 
+        
+        masterArray[1][round(self.pos[0])][round(self.pos[1])] = self.fox_id
+        masterArray[2][round(self.pos[0])][round(self.pos[1])] += 1
+        return masterArray
+
+    
+    def BrainCayote(self, array, foxAgentList):
+        hunger = self.hunger
+        sleep_need = self.sleep_need
+        sleep_timer = self.sleep_timer
+        Denning = self.Denning
+        GOtoDEN = self.GOtoDEN
+        GoToFreind = self.GoToFreind
+        FamilyTime = self.FamilyTime
+        randomness = self.randomness
+        den_timer = self.den_timer
+        denplus_id = self.family
+
+        self.hunger += 1/34560
+        self.GoToFreind += 1/10000
+        self.sleep_need += 1/17280
+            
+
+
+        if sleep_timer > 0:
+            self.sleep_need = 0
+            self.sleep_timer = sleep_timer - (1/17280)
+            return [0,0]
+        if hunger >= 1 and exists(array[4], food_id):
+            if self.atAThing(array[4], food_id):
+                self.hunger = 0
+                self.GOtoDEN = 1
+                return self.moveTo(array[3], denplus_id)
+            else:
+                return self.moveTo(array[4], food_id)
+        if sleep_need >= 1:
+            self.sleep_timer = 1
+            return [0, 0]
+        if GoToFreind >= 1 and self.family_size > 1:
+            # print("Freind Triggered")
+            closestFriend = self.closestCanidFriend(foxAgentList)
+            if closestFriend[1] == None:
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]
+            if closestFriend[1] <= 1.5:
+                # print("closest freind in radius")
+                self.FamilyTime = 1 
+                self.GoToFreind = 0.0
+                return [0,0] #changed from return self.moveTo(array, family_id)
+            else:
+                return closestFriend[0]
+        if FamilyTime > 0:
+            self.GoToFreind = 0.0
+            self.FamilyTime = FamilyTime - (1/10)
+            closestFriend = self.closestCanidFriend(foxAgentList)
+            return closestFriend[0]
+        
+        else:
+            
+            option = weighted_random_choice(hunger, sleep_need, GOtoDEN, GoToFreind, randomness)
+
+            if option == "Hunger":
+                self.hunger = 1
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]
+
+
+            if option == "Sleep Need":
+                self.sleep_need = 0
+                self.sleep_timer = 1
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]
+       
+            if option == "Go to Friend" and self.family_size > 1:
+                self.GoToFreind = 1
+                closestFriend = self.closestCanidFriend(foxAgentList)
+                return closestFriend[0]
+      
+            else:
+                valuex = rd.randint(-1, 1)
+                valuey = rd.randint(-1, 1)
+                return [valuex, valuey]

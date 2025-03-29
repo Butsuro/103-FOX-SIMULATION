@@ -201,7 +201,7 @@ trapsVisible = False
 gridVisible = True
 
 print(WIDTH, HEIGHT)
-#subprocess.Popen(["python", "Initializer.py"])
+subprocess.Popen(["python", "Initializer.py"])
 
 # Get simulation data from json file
 with open("simoutput.json", "r") as file:
