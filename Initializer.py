@@ -31,7 +31,7 @@ for family in num_each_fam:
 #things we can adjust
 num_traps = 4
 Food_per_turn= num_canids
-num_traps = 6
+skip_trap_sim = True
 
 #Master array declaration
 height = 0
@@ -100,40 +100,33 @@ print("main sim complete")
 print("picking traps")      
 locations = FT.findLargest(Master_array[2], num_traps, width, height)
 
-results = {
-    "chosenEnclosure": enclosure_num,
-    "heatmap": Master_array[2].tolist(),
-    "Trap_locations": locations
-}
-with open("simoutput.json", "w") as file:
-    json.dump(results, file, indent = 4)
-
 for spot in locations:
     Master_array[5][spot[1]][spot[0]] = 1
 print("traps placed")
 counter = 0
 final_len = len(CanidAgentList) - num_traps
-print("starting capture sim")
-with tqdm(total=final_len, desc="Simulating Capture Time", unit="Foxes caught", ncols=200, position=0, leave=False) as pbar:
-    while(len(CanidAgentList) > final_len):
-        counter += 1
-        if counter-1 % cycle_multiplier == 0:
-            Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
-        else:
-            for Canid in CanidAgentList:
-                Master_array = Canid.move(Master_array, CanidAgentList)
-                if (np.array_equal(Canid.pos, loc) for loc in locations):
-                    Master_array[1][round(Canid.pos[0])][round(Canid.pos[1])] = 0
-                    for homie in CanidAgentList:
-                        if (Canid.family == homie.family):
-                            homie.family_count = homie.family_size -1
-                    CanidAgentList.remove(Canid)
-                    pbar.update(1)
-                else:
+if not skip_trap_sim:
+    print("starting capture sim")
+    with tqdm(total=final_len, desc="Simulating Capture Time", unit="Foxes caught", ncols=200, position=0, leave=False) as pbar:
+        while(len(CanidAgentList) > final_len):
+            counter += 1
+            if counter-1 % cycle_multiplier == 0:
+                Master_array = FS.spawnitems(Master_array, Food_per_turn, 4, 7)
+            else:
+                for Canid in CanidAgentList:
                     Master_array = Canid.move(Master_array, CanidAgentList)
-print("capture sim complete")
-print("total time taken is:") 
-print(counter/86400)
+                    if (np.array_equal(Canid.pos, loc) for loc in locations):
+                        Master_array[1][round(Canid.pos[0])][round(Canid.pos[1])] = 0
+                        for homie in CanidAgentList:
+                            if (Canid.family == homie.family):
+                                homie.family_count = homie.family_size -1
+                        CanidAgentList.remove(Canid)
+                        pbar.update(1)
+                    else:
+                        Master_array = Canid.move(Master_array, CanidAgentList)
+    print("capture sim complete")
+    print("total time taken is:") 
+    print(counter/86400)
 
 
 print("sending results")
