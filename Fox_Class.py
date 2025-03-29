@@ -84,7 +84,7 @@ class Fox:
     def move(self, masterArray, AgentList):
         brain_output = self.BrainFOX(masterArray, AgentList)
         asleep = False
-        if brain_output == "sleeping":
+        if str(brain_output) == "sleeping":
             brain_output = [0, 0]
             asleep = True
         self.direction = np.array(brain_output)
@@ -416,7 +416,7 @@ class Cayote:
     def move(self, masterArray, AgentList):
         brain_output = self.BrainCayote(masterArray, AgentList)
         asleep = False
-        if brain_output == "sleeping":
+        if str(brain_output) == "sleeping":
             brain_output = [0, 0]
             asleep = True
         self.direction = np.array(brain_output)
