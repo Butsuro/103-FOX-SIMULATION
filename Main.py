@@ -266,6 +266,8 @@ while running:
                         json.dump(data, file, indent=4)
 
                     running = False
+                    pygame.quit()
+                    # Run the simulation script
                     import frontendsim
 
                 if buttonType == "Foxes":
@@ -304,7 +306,6 @@ old_client_data = {
 with open("data.json", "w") as file:
     json.dump(old_client_data, file, indent=4)
 
-"""
 # Reset simulation data
 old_simulation_data = {
     "chosenEnclosure": 1,
@@ -315,6 +316,5 @@ old_simulation_data = {
 # Write back to the file
 with open("simoutput.json", "w") as file:
     json.dump(old_simulation_data, file, indent=4)
-"""
 
 print("ended")

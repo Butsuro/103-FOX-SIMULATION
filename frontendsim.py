@@ -3,11 +3,11 @@ import math
 import Masterarray as master
 import numpy as np
 import json
-import subprocess
-import time
-import threading
 
-#import Initializer
+print("\n" * 100)  # Pushes output off-screen
+
+import Initializer
+# Wait for the Initializer to finish
 
 pygame.init()
 
@@ -54,9 +54,8 @@ elif CHOSEN_CONTAINER == 2:
 else:
     CHOSEN_CONTAINER = Container3
 
-HEATMAP_SCALE = 30  # How visible the heatmap will be
 HEATMAP_COLOUR_SCALE = 0.4  # How quickly the heatmap will turn red
-HEATMAP_TRANSPARENCY_SCALE = 0.6  # How quickly the heatmap will be visible
+HEATMAP_TRANSPARENCY_SCALE = 3  # How quickly the heatmap will be visible
 
 # Simulation Display Variables
 X_OFFSET = 50  # Changes the x size of the environment
@@ -169,8 +168,13 @@ def drawEnvironment(arr, gridsVisible):
             if arr[y][x] != 0:
                 pygame.draw.rect(screen, numColourLegend[arr[y][x]], (pixelArr[y][x][0], pixelArr[y][x][1], pixelArr[y][x][2], pixelArr[y][x][3]))
 
+# Finds the heatmap scale based on the 85th percentile of the heatmap array
+def getHeatmapScale(arr):
+    percentile = np.percentile(arr, 85)  # Find the 85th percentile value (this will be when the heatmap turns red)
+    return 255/percentile
+
 # Draws the heatmap
-def drawHeatmap(arr):
+def drawHeatmap(arr, scale):
     xLength, yLength, pixelArr = turnArrayToPixels(arr, 0)
 
     # Loop through the array and multiply the transparency with the amount of foxes
@@ -178,8 +182,8 @@ def drawHeatmap(arr):
         for x in range(xLength):
             if CHOSEN_CONTAINER[y][x] != 0:
                 pixel = pygame.Surface((pixelArr[y][x][2], pixelArr[y][x][3]))
-                pixel.set_alpha(min(arr[y][x]*HEATMAP_SCALE*HEATMAP_TRANSPARENCY_SCALE, 180))  # transparency level
-                pixel.fill((255,max(255 - arr[y][x]*HEATMAP_SCALE*HEATMAP_COLOUR_SCALE, 0),0))
+                pixel.set_alpha(min(arr[y][x]*scale*HEATMAP_TRANSPARENCY_SCALE, 180))  # transparency level
+                pixel.fill((255,max(255 - arr[y][x]*scale*HEATMAP_COLOUR_SCALE, 0),0))
                 screen.blit(pixel, (pixelArr[y][x][0], pixelArr[y][x][1]))
 
 # Draws the traps. Requires the environment map and the trap location array
@@ -201,7 +205,7 @@ trapsVisible = False
 gridVisible = True
 
 print(WIDTH, HEIGHT)
-subprocess.run(["python3", "Initializer.py"])
+#subprocess.run(["python3", "Initializer.py"])
 
 # Get simulation data from json file
 with open("simoutput.json", "r") as file:
@@ -216,7 +220,8 @@ while running:
     screen.blit(IMAGES["background"], (0, 0))
     drawEnvironment(CHOSEN_CONTAINER, gridVisible)
     if heatmapVisible:
-        drawHeatmap(simData["heatmap"])
+        scale = getHeatmapScale(simData["heatmap"])
+        drawHeatmap(simData["heatmap"], scale)
     if trapsVisible:
         drawTraps(CHOSEN_CONTAINER, simData["Trap_locations"])
     

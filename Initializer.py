@@ -107,7 +107,7 @@ counter = 0
 final_len = len(CanidAgentList) - num_traps
 if not skip_trap_sim:
     print("starting capture sim")
-    with tqdm(total=final_len, desc="Simulating Capture Time", unit="Foxes caught", ncols=200, position=0, leave=False) as pbar:
+    with tqdm(total=final_len, desc="Simulating Capture Time", unit=" Foxes caught", ncols=200, position=0, leave=False) as pbar:
         while(len(CanidAgentList) > final_len):
             counter += 1
             if counter-1 % cycle_multiplier == 0:
