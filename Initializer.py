@@ -104,6 +104,9 @@ with tqdm(total=final_len, desc="Simulating Capture Time",  unit="Foxes caught",
             Master_array = fox.move(Master_array, foxAgentList)
             if (np.array_equal(fox.pos, loc) for loc in locations):
                 Master_array[1][round(fox.pos[0])][round(fox.pos[1])] = 0
+                for homie in foxAgentList:
+                    if (fox.family_id == homie.family_id):
+                        homie.family_count = homie.family_count -1
                 foxAgentList.remove(fox)
                 pbar.update(1)
             if counter-1 % 86400 == 0:
