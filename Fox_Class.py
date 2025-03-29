@@ -83,30 +83,27 @@ class Fox:
     #(np.array_equal(new_pos, fox.pos) and self.fox_id != fox.fox_id for fox in AgentList) 
     def move(self, masterArray, AgentList):
         brain_output = self.BrainFOX(masterArray, AgentList)
-        # print(f"FOX {self.fox_id} - Brain output: {brain_output}")
-        # print(f"FOX {self.fox_id} - original position: {self.pos}")
+        if brain_output == "sleeping":
+            brain_output = [0, 0]
+            asleep = True
         self.direction = np.array(brain_output)
-        # print(f"FOX {self.fox_id} - Direction: {self.direction}")
+        
         new_pos = np.round(self.pos+self.direction)
-        # print(f"FOX {self.fox_id} - Ideal position: {new_pos}")
+        
         
         if masterArray[0][round(new_pos[0])][round(new_pos[1])] == 4 or masterArray[0][round(new_pos[0])][round(new_pos[1])]  == 0:
-            # print("stepping outside")
             new_pos = self.pos
         if masterArray[1][round(new_pos[0])][round(new_pos[1])] != 0:
-            # print(f"stepping on another fox {masterArray[1][round(new_pos[0])][round(new_pos[1])]}")
-            # MA.print_large_2d_array(masterArray[1])
             new_pos = self.pos
 
         masterArray[1][round(self.pos[0])][round(self.pos[1])] = 0
-        # print(f"FOX {self.fox_id} - Position before: {self.pos}")
         self.pos = new_pos
-        # print(f"FOX {self.fox_id} - Position after: {self.pos}")
         if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
             raise ValueError(f"Invalid position detected: {self.pos}") 
         
         masterArray[1][round(self.pos[0])][round(self.pos[1])] = self.fox_id
-        masterArray[2][round(self.pos[0])][round(self.pos[1])] += 1
+        if not asleep:
+            masterArray[2][round(self.pos[0])][round(self.pos[1])] += 1
         return masterArray
 
     
@@ -145,7 +142,7 @@ class Fox:
             self.sleep_need = 0
             self.GOtoDEN = 0
             self.sleep_timer = sleep_timer - (1/36000)
-            return [0,0]
+            return "sleeping"
         if hunger >= 1 and exists(array[4], food_id):
             if self.atAThing(array[4], food_id):
                 self.hunger = 0
@@ -415,33 +412,29 @@ class Cayote:
     def makeDen(self, masterArray):
         masterArray[3][round(self.pos[1])][round(self.pos[0])] = self.family
     
-    #(np.array_equal(new_pos, fox.pos) and self.fox_id != fox.fox_id for fox in AgentList) 
     def move(self, masterArray, AgentList):
         brain_output = self.BrainCayote(masterArray, AgentList)
-        # print(f"FOX {self.fox_id} - Brain output: {brain_output}")
-        # print(f"FOX {self.fox_id} - original position: {self.pos}")
+        if brain_output == "sleeping":
+            brain_output = [0, 0]
+            asleep = True
         self.direction = np.array(brain_output)
-        # print(f"FOX {self.fox_id} - Direction: {self.direction}")
+        
         new_pos = np.round(self.pos+self.direction)
-        # print(f"FOX {self.fox_id} - Ideal position: {new_pos}")
+        
         
         if masterArray[0][round(new_pos[0])][round(new_pos[1])] == 4 or masterArray[0][round(new_pos[0])][round(new_pos[1])]  == 0:
-            # print("stepping outside")
             new_pos = self.pos
         if masterArray[1][round(new_pos[0])][round(new_pos[1])] != 0:
-            # print(f"stepping on another fox {masterArray[1][round(new_pos[0])][round(new_pos[1])]}")
-            # MA.print_large_2d_array(masterArray[1])
             new_pos = self.pos
 
         masterArray[1][round(self.pos[0])][round(self.pos[1])] = 0
-        # print(f"FOX {self.fox_id} - Position before: {self.pos}")
         self.pos = new_pos
-        # print(f"FOX {self.fox_id} - Position after: {self.pos}")
         if np.isnan(self.pos[0]) or np.isnan(self.pos[1]):
             raise ValueError(f"Invalid position detected: {self.pos}") 
         
         masterArray[1][round(self.pos[0])][round(self.pos[1])] = self.fox_id
-        masterArray[2][round(self.pos[0])][round(self.pos[1])] += 1
+        if not asleep:
+            masterArray[2][round(self.pos[0])][round(self.pos[1])] += 1
         return masterArray
 
     
@@ -476,7 +469,7 @@ class Cayote:
                 return self.moveTo(array[4], food_id)
         if sleep_need >= 1:
             self.sleep_timer = 1
-            return [0, 0]
+            return "sleeping"
         if GoToFreind >= 1 and self.family_size > 1:
             # print("Freind Triggered")
             closestFriend = self.closestCanidFriend(foxAgentList)
