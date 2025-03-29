@@ -461,7 +461,7 @@ class Cayote:
         if sleep_timer > 0:
             self.sleep_need = 0
             self.sleep_timer = sleep_timer - (1/17280)
-            return [0,0]
+            return "sleeping"
         if hunger >= 1 and exists(array[4], food_id):
             if self.atAThing(array[4], food_id):
                 self.hunger = 0
@@ -471,7 +471,7 @@ class Cayote:
                 return self.moveTo(array[4], food_id)
         if sleep_need >= 1:
             self.sleep_timer = 1
-            return "sleeping"
+            return [0,0]
         if GoToFreind >= 1 and self.family_size > 1:
             # print("Freind Triggered")
             closestFriend = self.closestCanidFriend(foxAgentList)
