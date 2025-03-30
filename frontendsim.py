@@ -168,10 +168,13 @@ def drawEnvironment(arr, gridsVisible):
             if arr[y][x] != 0:
                 pygame.draw.rect(screen, numColourLegend[arr[y][x]], (pixelArr[y][x][0], pixelArr[y][x][1], pixelArr[y][x][2], pixelArr[y][x][3]))
 
-# Finds the heatmap scale based on the 85th percentile of the heatmap array
+# Finds the heatmap scale based on the 80th percentile of the heatmap array
 def getHeatmapScale(arr):
-    percentile = np.percentile(arr, 85)  # Find the 85th percentile value (this will be when the heatmap turns red)
-    return 255/percentile
+    percentile = np.percentile(arr, 80)  # Find the 80th percentile value (this will be when the heatmap turns red)
+    if percentile == 0:
+        return 1
+    else:
+        return 255/percentile
 
 # Draws the heatmap
 def drawHeatmap(arr, scale):
@@ -204,7 +207,6 @@ heatmapVisible = False
 trapsVisible = False
 gridVisible = True
 
-print(WIDTH, HEIGHT)
 #subprocess.run(["python3", "Initializer.py"])
 
 # Get simulation data from json file

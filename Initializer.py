@@ -41,8 +41,8 @@ def pick_array(encolusure_num):
         height = 20*3
         return MA.Master1, height
     if encolusure_num == 2:
-        height = 16*3, height
-        return MA.Master2
+        height = 16*3
+        return MA.Master2, height
     else:
         height = 13*3
         return MA.Master3, height
