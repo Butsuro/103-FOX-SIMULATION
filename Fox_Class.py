@@ -89,7 +89,7 @@ class Fox:
             asleep = True
         self.direction = np.array(brain_output)
         
-        if self.direction == None:
+        if self.direction is None:
             valuex = rd.randint(-1, 1)
             valuey = rd.randint(-1, 1)
             self.direction = [valuex, valuey]
@@ -426,7 +426,7 @@ class Cayote:
             asleep = True
         self.direction = np.array(brain_output)
 
-        if self.direction == None:
+        if self.direction is None:
             valuex = rd.randint(-1, 1)
             valuey = rd.randint(-1, 1)
             self.direction = [valuex, valuey]
