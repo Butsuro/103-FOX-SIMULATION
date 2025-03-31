@@ -89,6 +89,11 @@ class Fox:
             asleep = True
         self.direction = np.array(brain_output)
         
+        if self.direction == None:
+            valuex = rd.randint(-1, 1)
+            valuey = rd.randint(-1, 1)
+            self.direction = [valuex, valuey]
+
         new_pos = np.round(self.pos+self.direction)
         
         
@@ -420,6 +425,11 @@ class Cayote:
             brain_output = [0, 0]
             asleep = True
         self.direction = np.array(brain_output)
+
+        if self.direction == None:
+            valuex = rd.randint(-1, 1)
+            valuey = rd.randint(-1, 1)
+            self.direction = [valuex, valuey]
         
         new_pos = np.round(self.pos+self.direction)
         

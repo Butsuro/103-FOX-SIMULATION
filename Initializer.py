@@ -31,7 +31,8 @@ for family in num_each_fam:
 #things we can adjust
 num_traps = num_canids
 Food_per_turn= num_canids
-skip_trap_sim = True
+skip_trap_sim = False
+break_after_one = True
 
 #Master array declaration
 height = 0
@@ -121,6 +122,8 @@ if not skip_trap_sim:
                             if (Canid.family == homie.family):
                                 homie.family_count = homie.family_size -1
                         CanidAgentList.remove(Canid)
+                        if break_after_one:
+                            break
                         pbar.update(1)
                     else:
                         Master_array = Canid.move(Master_array, CanidAgentList)
