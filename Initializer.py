@@ -115,7 +115,7 @@ if not skip_trap_sim:
             else:
                 for Canid in CanidAgentList:
                     Master_array = Canid.move(Master_array, CanidAgentList)
-                    if (np.array_equal(Canid.pos, loc) for loc in locations):
+                    if (Master_array[5][round(Canid.pos[0])][round(Canid.pos[1])] != 0):
                         Master_array[1][round(Canid.pos[0])][round(Canid.pos[1])] = 0
                         for homie in CanidAgentList:
                             if (Canid.family == homie.family):
