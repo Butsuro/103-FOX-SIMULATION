@@ -29,7 +29,7 @@ for family in num_each_fam:
     num_canids += family 
 
 #things we can adjust
-num_traps = 4
+num_traps = num_canids
 Food_per_turn= num_canids
 skip_trap_sim = True
 

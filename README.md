@@ -1,5 +1,13 @@
 # 103-FOX-SIMULATION
 843C
+The Code in this repository serves 
+as out solution to the Sandy pines wildlife
+centers problems with capturing foxes
 
+If you would like to run the code yourself:
+you must clone or download the repository and run the main.py file
 
-CODE STORAGE AREA
+if there are any additional variables that you would like to modify like the number of traps,
+ that can be modified at the initializer.py file
+
+any additional capture info for the progress and proccesing stage the file is on can be seen in the terminal
