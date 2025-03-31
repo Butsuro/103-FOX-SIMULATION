@@ -126,7 +126,7 @@ if not skip_trap_sim:
                         Master_array = Canid.move(Master_array, CanidAgentList)
     print("capture sim complete")
     print("total time taken is:") 
-    print(counter/86400)
+    print(counter/cycle_multiplier)
 
 
 print("sending results")
