@@ -11,3 +11,5 @@ if there are any additional variables that you would like to modify like the num
  that can be modified at the initializer.py file
 
 any additional capture info for the progress and proccesing stage the file is on can be seen in the terminal
+
+We recomend running the simulation multiple times for the most accurate results
