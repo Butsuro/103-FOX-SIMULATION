@@ -122,7 +122,7 @@ if not skip_trap_sim:
                             if (Canid.family == homie.family):
                                 homie.family_count = homie.family_size -1
                         CanidAgentList.remove(Canid)
-                        print(f"trap at {round(Canid.pos[1])}{round(Canid.pos[0])} (x,y) took {counter/cycle_multiplier * 24} hours to capture the canids")
+                        print(f"trap at ({round(Canid.pos[1])}, {round(Canid.pos[0])}) (x,y) took {counter/cycle_multiplier * 24} hours to capture the canids")
                         if break_after_one:
                             break
                         pbar.update(1)
