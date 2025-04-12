@@ -3,6 +3,7 @@ import math
 import Masterarray as master
 import numpy as np
 import json
+import textwrap
 
 print("\n" * 100)  # Pushes output off-screen
 
@@ -127,6 +128,14 @@ buttons = {}
 buttons[0] = Button(1, "Toggle Grid", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
 buttons[1] = Button(2, "Display Heatmap", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
 buttons[2] = Button(3, "Display Traps", (76, 196, 134), (154, 226, 187), (255, 249, 255), pygame.font.Font(None, 16))
+buttons[3] = Button(
+    4,                         # order: makes it draw below the third
+    "View Trap Info",          # text
+    (76,196,134),              # color
+    (154,226,187),             # hover color
+    (255,249,255),             # text color
+    pygame.font.Font(None,16)  # font
+)
 
 
 ################################### Useful functions ###################################
@@ -207,6 +216,12 @@ heatmapVisible = False
 trapsVisible = False
 gridVisible = True
 
+running = True
+page = 1
+
+# Predefine the Back button for page 2
+back_btn = pygame.font.Font(None,16)
+
 #subprocess.run(["python3", "Initializer.py"])
 
 # Get simulation data from json file
@@ -216,58 +231,75 @@ with open("simoutput.json", "r") as file:
 while running:
     pygame.time.delay(RENDER_TIME)
 
-    # Fill the simulation every frame
-    screen.fill(BLACK)
-    pygame.draw.rect(screen, BLACK, (X_OFFSET, Y_OFFSET, WIDTH - 2*X_OFFSET, HEIGHT - 2*Y_OFFSET))
-    screen.blit(IMAGES["background"], (0, 0))
-    drawEnvironment(CHOSEN_CONTAINER, gridVisible)
-    if heatmapVisible:
-        scale = getHeatmapScale(simData["heatmap"])
-        drawHeatmap(simData["heatmap"], scale)
-    if trapsVisible:
-        drawTraps(CHOSEN_CONTAINER, simData["Trap_locations"])
-    
-    # Draw buttons
-    for button in buttons.values():
-        button.draw(screen)
+    # ── PAGE 1: Environment + Controls ───────────────────────────────
+    if page == 1:
+        screen.fill(WHITE)
+        screen.blit(IMAGES['background'], (0,0))
 
-    # Event handler
+        # Draw environment
+        drawEnvironment(CHOSEN_CONTAINER, gridVisible)
+        if heatmapVisible:
+            scale = getHeatmapScale(simData["heatmap"])
+            drawHeatmap(simData["heatmap"], scale)
+        if trapsVisible:
+            drawTraps(CHOSEN_CONTAINER, simData["Trap_locations"])
+
+        # Draw main buttons (0–3)
+        for btn in buttons.values():
+            btn.draw(screen)
+
+    # ── PAGE 2: Trap Info List ───────────────────────────────────────
+    else:  # page == 2
+        screen.fill(WHITE)
+        screen.blit(IMAGES['background'], (0,0))
+
+        # Draw Back button in top-left
+        b = Button(1, "Back", RED, GRAY, WHITE, pygame.font.Font(None,16))
+        b.draw(screen)
+
+        # Render Trap_info entries
+        trap_info = simData.get("Trap_info", ["(no Trap_info)"])
+        info_font = pygame.font.Font(None, 18)
+        import textwrap
+        x, y = 50, 100
+        line_h = info_font.get_height() + 4
+
+        for entry in trap_info:
+            for line in textwrap.wrap(entry, width=40):
+                screen.blit(info_font.render(line, True, BLACK), (x, y))
+                y += line_h
+            y += line_h  # extra space between entries
+
+    # ── EVENT HANDLING ────────────────────────────────────────────────
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        # Check all buttons and map them with a function
-        for button in buttons.values():
-            if button.isClicked(event):
-                buttonType = button.get()
-                
-                if buttonType == "Toggle Grid":
-                    gridVisible = not gridVisible
-                if buttonType == "Display Heatmap":
-                    heatmapVisible = not heatmapVisible
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mx, my = event.pos
 
-                    """
-                    SAMPLE HEAT MAP
+            if page == 1:
+                for btn in buttons.values():
+                    if btn.isClicked(event):
+                        t = btn.get()
+                        if t == "Toggle Grid":
+                            gridVisible = not gridVisible
+                        elif t == "Display Heatmap":
+                            heatmapVisible = not heatmapVisible
+                        elif t == "Display Traps":
+                            trapsVisible = not trapsVisible
+                        elif t == "View Trap Info":
+                            page = 2
 
-                    rows, cols = len(CHOSEN_CONTAINER), 36
-                    random_base = np.random.randint(0, 21, (rows, cols))
-                    smoothed_array = random_base.copy()
-                    for i in range(rows):
-                        for j in range(cols):
-                            neighbors = []
-                            for di in [-1, 0, 1]:
-                                for dj in [-1, 0, 1]:
-                                    ni, nj = i + di, j + dj
-                                    if 0 <= ni < rows and 0 <= nj < cols:
-                                        neighbors.append(random_base[ni, nj])
-                            smoothed_array[i, j] = np.mean(neighbors)
-                    smoothed_array = np.clip(smoothed_array, 0, 20).astype(int)
-                    """
+            else:  # page == 2
+                if b.isClicked(event):
+                    page = 1
 
-                if buttonType == "Display Traps":
-                    trapsVisible = not trapsVisible
-                    
     pygame.display.update()
+
+pygame.quit()
+                    
+pygame.display.update()
 
 # Quit pygame
 pygame.quit()
