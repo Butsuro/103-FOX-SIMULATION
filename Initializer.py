@@ -15,7 +15,7 @@ enclosure_num = user_input["chosenEnclosure"]
 enclosure_time = user_input["days"]
 num_each_fam = user_input["canidsPerFamily"]
 Chosen_Canid = user_input["chosenCanid"]
-
+skip_trap_sim = user_input["skip_trap"]
 
 if Chosen_Canid == "Foxes":
     Is_fox = True
@@ -31,7 +31,6 @@ for family in num_each_fam:
 #things we can adjust
 num_traps = num_canids
 Food_per_turn= num_canids
-skip_trap_sim = False
 break_after_one = False
 
 #Master array declaration
@@ -124,7 +123,7 @@ if not skip_trap_sim:
                                 homie.family_count = homie.family_size -1
                         CanidAgentList.remove(Canid)
                         print(f"trap at ({round(Canid.pos[1])}, {round(Canid.pos[0])}) (x,y) took {counter/cycle_multiplier * 24} hours to capture the canids")
-                        trap_info.append(f"trap at ({round(Canid.pos[1])}, {round(Canid.pos[0])}) (x,y) took {counter/cycle_multiplier * 24} hours to capture the canids")
+                        trap_info.append(f"trap at ({round(Canid.pos[1])}, {round(Canid.pos[0])}) (x,y) took {(counter/cycle_multiplier * 24):.1f} hours")
                         if break_after_one:
                             break
                         pbar.update(1)
@@ -134,6 +133,8 @@ if not skip_trap_sim:
     print("total time taken to capture is:") 
     print(f"{counter/cycle_multiplier} days")
 
+else:
+    trap_info = ["Trap Simulation was skipped"]
 
 print("sending results")
 results = {
