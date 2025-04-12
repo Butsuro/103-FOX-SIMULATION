@@ -32,7 +32,7 @@ for family in num_each_fam:
 num_traps = num_canids
 Food_per_turn= num_canids
 skip_trap_sim = False
-break_after_one = True
+break_after_one = False
 
 #Master array declaration
 height = 0
