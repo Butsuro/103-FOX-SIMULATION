@@ -106,6 +106,7 @@ for spot in locations:
 print("traps placed")
 counter = 0
 final_len = len(CanidAgentList) - num_traps
+trap_info = []
 if not skip_trap_sim:
     print("starting capture sim")
     with tqdm(total=final_len, desc="Simulating Capture Time", unit=" Foxes caught", ncols=200, position=0, leave=False) as pbar:
@@ -123,6 +124,7 @@ if not skip_trap_sim:
                                 homie.family_count = homie.family_size -1
                         CanidAgentList.remove(Canid)
                         print(f"trap at ({round(Canid.pos[1])}, {round(Canid.pos[0])}) (x,y) took {counter/cycle_multiplier * 24} hours to capture the canids")
+                        trap_info.append(f"trap at ({round(Canid.pos[1])}, {round(Canid.pos[0])}) (x,y) took {counter/cycle_multiplier * 24} hours to capture the canids")
                         if break_after_one:
                             break
                         pbar.update(1)
@@ -137,7 +139,8 @@ print("sending results")
 results = {
     "chosenEnclosure": enclosure_num,
     "heatmap": Master_array[2].tolist(),
-    "Trap_locations": locations
+    "Trap_locations": locations,
+    "Trap_info": trap_info
 }
 
 with open("simoutput.json", "w") as file:
