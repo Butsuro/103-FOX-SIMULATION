@@ -4,7 +4,8 @@ The Code in this repository serves
 as out solution to the Sandy pines wildlife
 centers problems with capturing foxes
 
-If you want do download the file go to the executable folder and download the fox simulation.exe file, and run it.
+If you want do download the file as a executable you can at this link:
+https://drive.google.com/file/d/13GomImWS7wEsIMJuC5hlZKSLn0S_KrxU/view?usp=drive_link
 
 If you would like to run the code yourself:
 you must clone or download the repository and run the main.py file
