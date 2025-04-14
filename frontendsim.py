@@ -4,6 +4,7 @@ import Masterarray as master
 import numpy as np
 import json
 import textwrap
+import Path_finder as pf
 
 print("\n" * 100)  # Pushes output off-screen
 
@@ -44,7 +45,7 @@ numColourLegend = {
 
 ################################### Simulation Variables ###################################
 # Get client data from json file
-with open("data.json", "r") as file:
+with open(pf.resource_path("data.json"), "r") as file:
     data = json.load(file)
 
 CHOSEN_CONTAINER = data["chosenEnclosure"]
@@ -121,7 +122,7 @@ class Button:
 
 # Images
 IMAGES = {}
-IMAGES['background'] = pygame.image.load('assets/background.png').convert_alpha()
+IMAGES['background'] = pygame.image.load(pf.resource_path("assets/background.png")).convert_alpha()
 
 # Buttons
 buttons = {}
@@ -225,7 +226,7 @@ back_btn = pygame.font.Font(None,16)
 #subprocess.run(["python3", "Initializer.py"])
 
 # Get simulation data from json file
-with open("simoutput.json", "r") as file:
+with open(pf.resource_path("simoutput.json"), "r") as file:
     simData = json.load(file)
 
 while running:

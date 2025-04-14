@@ -6,9 +6,10 @@ import json
 import Fox_Class as F_CLASS
 import numpy as np
 from tqdm import tqdm
+import Path_finder as pf
 
 #importing from data file
-with open("data.json", "r") as file:
+with open(pf.resource_path("data.json"), "r") as file:
     user_input = json.load(file)
 
 enclosure_num = user_input["chosenEnclosure"]
@@ -144,7 +145,7 @@ results = {
     "Trap_info": trap_info
 }
 
-with open("simoutput.json", "w") as file:
+with open(pf.resource_path("simoutput.json"), "w") as file:
     json.dump(results, file, indent = 4)
 
 print("results sent")

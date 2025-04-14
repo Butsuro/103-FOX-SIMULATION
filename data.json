@@ -3,14 +3,8 @@
     "days": 1,
     "chosenEnclosure": 1,
     "canidsPerFamily": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
         1
     ],
-    "families": 7,
+    "families": 1,
     "skip_trap": false
 }
