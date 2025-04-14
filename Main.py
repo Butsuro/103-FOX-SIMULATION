@@ -185,24 +185,7 @@ def main():
         if running:
             pygame.display.update()
     pygame.quit()
-    old_client_data = {
-        "chosenCanid": "Foxes",
-        "days": 1,
-        "chosenEnclosure": 1,
-        "canidsPerFamily": [1],
-        "families": 1,
-        "skip_trap": False
-    }
-    with open(pf.resource_path("data.json"), "w") as f:
-        json.dump(old_client_data, f, indent=4)
-    old_simulation_data = {
-        "chosenEnclosure": 1,
-        "heatmap": [[]],
-        "Trap_locations": [[]],
-        "Trap_info": []
-    }
-    with open(pf.resource_path("simoutput.json"), "w") as f:
-        json.dump(old_simulation_data, f, indent=4)
+    
     print("ended")
     if simulationStarted:
         try:
@@ -215,3 +198,22 @@ def main():
 if __name__ == '__main__':
     multiprocessing.freeze_support()
     main()
+
+old_client_data = {
+        "chosenCanid": "Foxes",
+        "days": 1,
+        "chosenEnclosure": 1,
+        "canidsPerFamily": [1],
+        "families": 1,
+        "skip_trap": False
+    }
+with open(pf.resource_path("data.json"), "w") as f:
+    json.dump(old_client_data, f, indent=4)
+old_simulation_data = {
+    "chosenEnclosure": 1,
+    "heatmap": [[]],
+    "Trap_locations": [[]],
+    "Trap_info": []
+}
+with open(pf.resource_path("simoutput.json"), "w") as f:
+    json.dump(old_simulation_data, f, indent=4)
